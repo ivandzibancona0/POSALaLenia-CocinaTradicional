@@ -204,4 +204,5 @@ POS - A La Leña/
 
 ## 📄 Licencia
 
-Este software ha sido desarrollado para **A La Leña - Cocina Tradicional**. Todos los derechos reservados.
+Este proyecto está bajo la Licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más detalles.
+

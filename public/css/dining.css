@@ -1,0 +1,155 @@
+/* Dining Room & Tables Styles - A La Leña */
+
+.dining-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.table-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.table-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.table-card.free {
+  border-color: var(--success-500);
+  background: linear-gradient(180deg, var(--bg-card) 0%, rgba(16, 185, 129, 0.03) 100%);
+}
+
+.table-card.occupied {
+  border-color: var(--amber-500);
+  background: linear-gradient(180deg, var(--bg-card) 0%, rgba(245, 158, 11, 0.04) 100%);
+}
+
+.table-card.billed {
+  border-color: var(--primary-600);
+  background: linear-gradient(180deg, var(--bg-card) 0%, rgba(134, 28, 28, 0.05) 100%);
+}
+
+.table-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.table-number-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #fff;
+  background: var(--primary-700);
+}
+
+.table-card.free .table-number-badge {
+  background: var(--success-600);
+}
+
+.table-card.occupied .table-number-badge {
+  background: var(--amber-500);
+}
+
+.table-card.billed .table-number-badge {
+  background: var(--primary-700);
+}
+
+.table-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-bottom: 1rem;
+}
+
+.table-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.table-guest {
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.table-metrics {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--border-color);
+}
+
+.table-items-count {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.table-total-amount {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.table-card.occupied .table-total-amount {
+  color: var(--amber-600);
+}
+
+.table-card.billed .table-total-amount {
+  color: var(--primary-700);
+}
+
+/* Dining Account Modal Styles */
+.dining-account-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .dining-account-layout {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.dining-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 350px;
+  overflow-y: auto;
+}
+
+.dining-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.8rem;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}

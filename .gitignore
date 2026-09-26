@@ -1,0 +1,89 @@
+# ========================================================
+# POS - A LA LEÑA: .gitignore
+# ========================================================
+
+# Dependencias
+node_modules/
+package-lock.json.bak
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.pnpm-store/
+
+# Variables de entorno y credenciales (mantener privado)
+.env
+.env.*
+!.env.example
+!.env.template
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
+
+# Archivos de respaldo, copias temporales y versiones de edición
+*.bak
+*.backup
+*.old
+*.orig
+*.tmp
+*.temp
+*~
+
+# Carpeta de datos locales y cargas temporales
+data/
+temp_uploads/
+uploads/
+
+# Archivos de respaldo y volcados de base de datos
+*.sql
+*.db
+*.sqlite
+*.sqlite3
+*.dump
+
+# Logs y depuración
+logs/
+*.log
+
+# Caches y compilados
+.cache/
+dist/
+build/
+coverage/
+.nyc_output/
+.eslintcache
+.stylelintcache
+
+# Archivos del sistema operativo
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+.fuse_hidden*
+.directory
+.Trash-*
+
+# Editores e IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+.cursor/
+

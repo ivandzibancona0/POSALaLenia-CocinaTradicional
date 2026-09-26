@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>A La Leña | Sistema Punto de Venta - Cocina Tradicional Yucateca</title>
+  <meta name="description" content="Sistema POS para el restaurante y fondita A La Leña - Especialistas en comida regional yucateca a la leña.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- jsPDF for Digital PDF Tickets -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <!-- Application Stylesheets -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pos.css">
+  <link rel="stylesheet" href="css/dining.css">
+  <link rel="stylesheet" href="css/print.css">
+</head>
+<body>
+
+  <!-- LOGIN SCREEN -->
+  <div id="login-screen" style="display: none; min-height: 100vh; background: radial-gradient(circle at center, #6b1515 0%, #300a0a 100%); align-items: center; justify-content: center; padding: 1.5rem;">
+    <div style="background: rgba(255, 255, 255, 0.98); border-radius: var(--radius-lg); box-shadow: var(--shadow-xl); width: 100%; max-width: 440px; padding: 2.5rem 2rem; border: 2px solid rgba(245, 158, 11, 0.4); text-align: center;">
+      
+      <!-- Brand Logo -->
+      <img src="assets/logo-a-la-leña.jpg" alt="A La Leña Logo" style="width: 110px; height: 110px; border-radius: var(--radius-lg); object-fit: cover; border: 3px solid var(--amber-400); box-shadow: var(--shadow-md); margin-bottom: 1rem;">
+      
+      <h1 style="font-size: 1.7rem; color: var(--primary-900); font-weight: 800; letter-spacing: 0.5px;">A LA LEÑA</h1>
+      <p style="font-size: 0.85rem; color: var(--amber-600); font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1.5rem;">Cocina Tradicional Yucateca</p>
+
+      <form id="login-form" style="text-align: left; display: flex; flex-direction: column; gap: 1rem;">
+        <div class="form-group">
+          <label class="form-label" for="login-username">Usuario</label>
+          <div class="search-input-wrapper">
+            <span id="icon-user-login"></span>
+            <input type="text" id="login-username" placeholder="Ingrese su usuario..." required autofocus>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="login-password">Contraseña</label>
+          <div class="search-input-wrapper">
+            <span id="icon-lock-login"></span>
+            <input type="password" id="login-password" placeholder="Ingrese su contraseña..." required>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 0.5rem;" id="btn-login-submit">
+          <span>Iniciar Sesión</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- AUTHENTICATED APP CONTAINER -->
+  <div id="app" style="display: none;">
+
+    <!-- TOP HEADER -->
+    <header class="app-header">
+      <div class="brand-section">
+        <button class="btn-icon-header btn-menu-toggle" id="btn-toggle-mobile-menu" title="Abrir Menú">
+          <span id="icon-menu-bar"></span>
+        </button>
+        <img src="assets/logo-a-la-leña.jpg" alt="Logo" class="brand-logo-img">
+        <div class="brand-info">
+          <span class="brand-title">A LA LEÑA</span>
+          <span class="brand-subtitle">Cocina Tradicional</span>
+        </div>
+      </div>
+
+      <!-- DESKTOP NAVIGATION -->
+      <nav class="nav-desktop" id="nav-desktop">
+        <button class="nav-item active" data-view="pos">
+          <span class="nav-icon" data-icon="shopping-bag"></span>
+          <span>Caja</span>
+        </button>
+        <button class="nav-item" data-view="dining">
+          <span class="nav-icon" data-icon="utensils"></span>
+          <span>Comedor</span>
+        </button>
+        <button class="nav-item" data-view="customers">
+          <span class="nav-icon" data-icon="users"></span>
+          <span>Clientes</span>
+        </button>
+        <button class="nav-item role-admin-only" data-view="inventory">
+          <span class="nav-icon" data-icon="package"></span>
+          <span>Inventario</span>
+        </button>
+        <button class="nav-item role-admin-only" data-view="reports">
+          <span class="nav-icon" data-icon="bar-chart-3"></span>
+          <span>Reportes</span>
+        </button>
+        <button class="nav-item role-admin-only" data-view="users">
+          <span class="nav-icon" data-icon="user-cog"></span>
+          <span>Usuarios</span>
+        </button>
+        <button class="nav-item role-admin-only" data-view="settings">
+          <span class="nav-icon" data-icon="settings"></span>
+          <span>Configuración</span>
+        </button>
+      </nav>
+
+      <!-- HEADER ACTIONS & USER PILL -->
+      <div class="header-actions">
+        <div class="user-pill">
+          <div class="user-avatar-badge" id="header-user-avatar">A</div>
+          <div class="user-details">
+            <span class="user-name" id="header-user-name">Administrador</span>
+            <span class="user-role-badge" id="header-user-role">ADMIN</span>
+          </div>
+        </div>
+
+        <button class="btn-icon-header" id="btn-logout" title="Cerrar Sesión">
+          <span data-icon="log-out"></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- MOBILE DRAWER -->
+    <div class="mobile-drawer-overlay" id="mobile-drawer-overlay"></div>
+    <div class="mobile-drawer" id="mobile-drawer">
+      <div class="drawer-header">
+        <div class="brand-section">
+          <img src="assets/logo-a-la-leña.jpg" alt="Logo" style="width: 36px; height: 36px; border-radius: var(--radius-md);">
+          <div>
+            <div style="font-weight: 800; font-size: 1.1rem; line-height: 1;">A LA LEÑA</div>
+            <div style="font-size: 0.7rem; color: var(--amber-400);">Cocina Yucateca</div>
+          </div>
+        </div>
+        <button id="btn-close-drawer" class="btn-icon-header">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+
+      <div class="drawer-nav">
+        <button class="drawer-nav-item active" data-view="pos">
+          <span data-icon="shopping-bag"></span>
+          <span>Caja (POS)</span>
+        </button>
+        <button class="drawer-nav-item" data-view="dining">
+          <span data-icon="utensils"></span>
+          <span>Comedor y Mesas</span>
+        </button>
+        <button class="drawer-nav-item" data-view="customers">
+          <span data-icon="users"></span>
+          <span>Clientes</span>
+        </button>
+        <button class="drawer-nav-item role-admin-only" data-view="inventory">
+          <span data-icon="package"></span>
+          <span>Inventario</span>
+        </button>
+        <button class="drawer-nav-item role-admin-only" data-view="reports">
+          <span data-icon="bar-chart-3"></span>
+          <span>Reportes</span>
+        </button>
+        <button class="drawer-nav-item role-admin-only" data-view="users">
+          <span data-icon="user-cog"></span>
+          <span>Usuarios</span>
+        </button>
+        <button class="drawer-nav-item role-admin-only" data-view="settings">
+          <span data-icon="settings"></span>
+          <span>Configuración</span>
+        </button>
+      </div>
+
+      <div class="drawer-footer">
+        <button class="btn btn-danger" style="width: 100%;" id="btn-drawer-logout">
+          <span data-icon="log-out"></span>
+          <span>Cerrar Sesión</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT VIEW ROUTER CONTAINER -->
+    <main class="main-content">
+
+      <!-- ========================================== -->
+      <!-- 1. VISTA: CAJA (POS CASHIER) -->
+      <!-- ========================================== -->
+      <section id="view-pos" class="page-view active">
+        <div class="pos-container">
+
+          <!-- Left: Catalog & Search -->
+          <div class="catalog-section">
+            
+            <!-- Search Bar & Controls -->
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+              <div class="search-input-wrapper" style="flex: 1; min-width: 240px;">
+                <span data-icon="search"></span>
+                <input type="text" id="pos-product-search" placeholder="Buscar platillo por nombre o código...">
+              </div>
+            </div>
+
+            <!-- Categories Tabs -->
+            <div class="category-tabs-wrapper" id="pos-category-tabs">
+              <button class="category-tab active" data-category-id="">
+                <span data-icon="layout-grid"></span>
+                <span>Todos</span>
+              </button>
+              <!-- Dynamic Categories -->
+            </div>
+
+            <!-- Products Grid with Real-Time Stock & Portion Selectors -->
+            <div class="products-grid" id="pos-products-grid">
+              <!-- Dynamic Products -->
+            </div>
+
+            <!-- Infinite Scroll Loader for POS Catalog -->
+            <div id="pos-catalog-sentinel" class="scroll-sentinel" style="display: none;">
+              <div class="spinner"></div>
+              <span>Cargando más platillos...</span>
+            </div>
+          </div>
+
+          <!-- Right: Cart Sidebar -->
+          <div class="cart-sidebar">
+            <div class="cart-header">
+              <div class="cart-title">
+                <span data-icon="shopping-cart"></span>
+                <span>Orden de Venta</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.4rem;">
+                <button type="button" class="btn btn-warning btn-sm" id="btn-held-orders-indicator" onclick="pos.openHeldOrdersModal()" style="display: none; font-size: 0.75rem; padding: 0.2rem 0.55rem; background: var(--amber-400); color: #1e1e1e; font-weight: 700; border: none; border-radius: var(--radius-full);" title="Ver ventas en espera">
+                  <span data-icon="pause-circle" style="width: 14px; height: 14px;"></span>
+                  <span id="held-indicator-count">0</span> en espera
+                </button>
+                <button class="btn btn-secondary btn-sm" id="btn-clear-cart" title="Vaciar Carrito" style="background: rgba(255,255,255,0.2); color: white; border: none;">
+                  <span data-icon="trash-2"></span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Customer Search / Select -->
+            <div class="cart-customer-section">
+              <div id="selected-customer-display" style="display: none;" class="selected-customer-pill">
+                <div class="selected-customer-details">
+                  <span style="font-weight: 700; font-size: 0.85rem;" id="cart-customer-name">Don Manuel Pech</span>
+                  <span style="font-size: 0.75rem; color: var(--text-muted);" id="cart-customer-phone">999-555-1234</span>
+                </div>
+                <button class="btn-icon btn-sm" id="btn-remove-selected-customer" title="Quitar Cliente" style="color: var(--danger-600);">
+                  <span data-icon="x"></span>
+                </button>
+              </div>
+
+              <div id="customer-search-box" style="display: flex; gap: 0.4rem;">
+                <div class="search-input-wrapper">
+                  <span data-icon="user"></span>
+                  <input type="text" id="pos-customer-search-input" placeholder="Buscar cliente (nombre/tel)..." autocomplete="off">
+                </div>
+                <button class="btn btn-amber btn-sm" id="btn-quick-new-customer" title="Nuevo Cliente">
+                  <span data-icon="user-plus"></span>
+                </button>
+              </div>
+
+              <!-- Autocomplete Results Dropdown -->
+              <div class="customer-autocomplete-results" id="pos-customer-results"></div>
+            </div>
+
+            <!-- Cart Items List -->
+            <div class="cart-items-container" id="cart-items-list">
+              <div class="cart-empty-state">
+                <span data-icon="shopping-bag" style="width: 42px; height: 42px; opacity: 0.4;"></span>
+                <p>El carrito está vacío</p>
+                <span style="font-size: 0.78rem;">Seleccione platillos del catálogo</span>
+              </div>
+            </div>
+
+            <!-- Sales Comments / Notes -->
+            <div class="cart-comments-section">
+              <label class="form-label" style="font-size: 0.75rem; margin-bottom: 0.2rem;" for="pos-sale-notes">
+                Comentarios / Instrucciones de preparación:
+              </label>
+              <textarea id="pos-sale-notes" class="cart-comments-textarea" placeholder="Ej. Sin cebolla morada, salsa habanera aparte..."></textarea>
+            </div>
+
+            <!-- Cart Footer & Totals -->
+            <div class="cart-footer">
+              <div class="cart-summary-row">
+                <span>Subtotal:</span>
+                <span id="cart-subtotal-val" style="font-weight: 700;">$0.00</span>
+              </div>
+              <div class="cart-summary-row">
+                <span>Descuento ($):</span>
+                <input type="number" id="cart-discount-input" value="0" min="0" step="1" style="width: 80px; padding: 0.2rem 0.4rem; text-align: right;">
+              </div>
+              <div class="cart-summary-row total">
+                <span>TOTAL:</span>
+                <span class="total-amount" id="cart-total-val">$0.00</span>
+              </div>
+
+              <div class="cart-actions">
+                <button class="btn btn-secondary" id="btn-cart-hold" title="Guardar orden">
+                  <span data-icon="pause-circle"></span>
+                  <span>Pausar</span>
+                  <span id="held-orders-badge" class="badge badge-warning" style="display: none; margin-left: 0.3rem; padding: 0.1rem 0.45rem; font-size: 0.72rem; border-radius: var(--radius-full); font-weight: 800;">0</span>
+                </button>
+                <button class="btn btn-primary btn-lg" id="btn-open-checkout">
+                  <span data-icon="check-circle-2"></span>
+                  <span>Cobrar</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- 2. VISTA: COMEDOR (DINING ROOM & TABLES) -->
+      <!-- ========================================== -->
+      <section id="view-dining" class="page-view">
+        <div class="page-header">
+          <div class="page-title-group">
+            <h1><span data-icon="utensils"></span> Comedor y Cuentas de Mesas</h1>
+            <p>Control de comensales en piso, pre-corte de ticket de consumo y cobro de cuentas</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-secondary" id="btn-refresh-tables">
+              <span data-icon="rotate-cw"></span>
+              <span>Actualizar Mesas</span>
+            </button>
+            <button class="btn btn-primary" id="btn-manage-tables" onclick="dining.openManageTablesModal()">
+              <span data-icon="layout-grid"></span>
+              <span>Configurar Mesas</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Dining Tables Grid -->
+        <div class="dining-grid" id="dining-tables-grid">
+          <!-- Dynamic Tables Cards -->
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- 3. VISTA: CLIENTES -->
+      <!-- ========================================== -->
+      <section id="view-customers" class="page-view">
+        <div class="page-header">
+          <div class="page-title-group">
+            <h1><span data-icon="users"></span> Directorio de Clientes</h1>
+            <p>Administración de clientes frecuentes, datos de entrega y consulta de historial de compras</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-primary" id="btn-add-customer-modal">
+              <span data-icon="user-plus"></span>
+              <span>Nuevo Cliente</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="card" style="margin-bottom: 1.25rem;">
+          <div class="card-body" style="padding: 0.85rem 1.25rem;">
+            <div class="search-input-wrapper">
+              <span data-icon="search"></span>
+              <input type="text" id="customers-search-input" placeholder="Buscar por Nombre, Apellido, Teléfono o Dirección...">
+            </div>
+          </div>
+        </div>
+
+        <!-- Customers Table with Infinite Scroll -->
+        <div class="card">
+          <div class="table-responsive">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th>Cliente</th>
+                  <th>Teléfono</th>
+                  <th>Dirección de Entrega</th>
+                  <th>Órdenes</th>
+                  <th>Total Comprado</th>
+                  <th style="text-align: right;">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="customers-table-body">
+                <!-- Dynamic Customer Rows -->
+              </tbody>
+            </table>
+          </div>
+          <div id="customers-sentinel" class="scroll-sentinel">
+            <div class="spinner"></div>
+            <span>Cargando clientes...</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- 4. VISTA: INVENTARIO (ADMIN ONLY) -->
+      <!-- ========================================== -->
+      <section id="view-inventory" class="page-view">
+        <div class="page-header">
+          <div class="page-title-group">
+            <h1><span data-icon="package"></span> Inventario y Catálogo de Platillos</h1>
+            <p>Control de productos, categorías, precios de raciones completas y medias, y ajuste de existencias</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-secondary" id="btn-manage-categories">
+              <span data-icon="tags"></span>
+              <span>Categorías</span>
+            </button>
+            <button class="btn btn-primary" id="btn-new-product-modal">
+              <span data-icon="plus-circle"></span>
+              <span>Nuevo Platillo / Producto</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filters & Search -->
+        <div class="card" style="margin-bottom: 1.25rem;">
+          <div class="card-body" style="padding: 0.85rem 1.25rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <div class="search-input-wrapper" style="flex: 1; min-width: 220px;">
+              <span data-icon="search"></span>
+              <input type="text" id="inventory-search-input" placeholder="Buscar en inventario por nombre o código...">
+            </div>
+            <select id="inventory-category-filter" style="width: auto; min-width: 180px;">
+              <option value="">Todas las Categorías</option>
+            </select>
+            <button class="btn btn-secondary" id="btn-filter-low-stock">
+              <span data-icon="alert-triangle"></span>
+              <span>Solo Bajo Stock</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Products Table with Infinite Scroll -->
+        <div class="card">
+          <div class="table-responsive">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Platillo / Producto</th>
+                  <th>Categoría</th>
+                  <th>Precio Ración</th>
+                  <th>Precio Media Ración</th>
+                  <th>Stock Actual</th>
+                  <th>Estado</th>
+                  <th style="text-align: right;">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="inventory-table-body">
+                <!-- Dynamic Inventory Rows -->
+              </tbody>
+            </table>
+          </div>
+          <div id="inventory-sentinel" class="scroll-sentinel">
+            <div class="spinner"></div>
+            <span>Cargando productos...</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- 5. VISTA: REPORTES (ADMIN ONLY) -->
+      <!-- ========================================== -->
+      <section id="view-reports" class="page-view">
+        <div class="page-header">
+          <div class="page-title-group">
+            <h1><span data-icon="bar-chart-3"></span> Reportes de Ventas</h1>
+            <p>Métricas financieras, análisis de ventas y reportes detallados con Número de Orden exportables en CSV</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-amber" id="btn-export-report-1-csv">
+              <span data-icon="download"></span>
+              <span>Reporte 1: Ventas Generales (CSV)</span>
+            </button>
+            <button class="btn btn-primary" id="btn-export-report-2-csv">
+              <span data-icon="file-spreadsheet"></span>
+              <span>Reporte 2: Detallado con No. Orden (CSV)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Date Range Filter Bar -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+          <div class="card-body" style="padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button class="btn btn-secondary btn-sm report-date-preset active" data-preset="today">Hoy</button>
+              <button class="btn btn-secondary btn-sm report-date-preset" data-preset="week">Esta Semana</button>
+              <button class="btn btn-secondary btn-sm report-date-preset" data-preset="month">Este Mes</button>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+              <label style="font-size: 0.85rem; font-weight: 600;">Desde:</label>
+              <input type="date" id="report-start-date" style="width: auto;">
+              <label style="font-size: 0.85rem; font-weight: 600;">Hasta:</label>
+              <input type="date" id="report-end-date" style="width: auto;">
+              <button class="btn btn-primary btn-sm" id="btn-apply-report-dates">
+                <span data-icon="filter"></span>
+                <span>Filtrar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI Summary Cards -->
+        <div class="stats-grid" id="reports-kpi-cards">
+          <div class="stat-card">
+            <div class="stat-icon-wrapper primary">
+              <span data-icon="dollar-sign"></span>
+            </div>
+            <div class="stat-info">
+              <span class="stat-label">Ventas Totales</span>
+              <span class="stat-value" id="kpi-total-sales">$0.00</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon-wrapper amber">
+              <span data-icon="shopping-cart"></span>
+            </div>
+            <div class="stat-info">
+              <span class="stat-label">Órdenes Realizadas</span>
+              <span class="stat-value" id="kpi-total-orders">0</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon-wrapper success">
+              <span data-icon="trending-up"></span>
+            </div>
+            <div class="stat-info">
+              <span class="stat-label">Ticket Promedio</span>
+              <span class="stat-value" id="kpi-avg-ticket">$0.00</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon-wrapper info">
+              <span data-icon="percent"></span>
+            </div>
+            <div class="stat-info">
+              <span class="stat-label">Descuentos Aplicados</span>
+              <span class="stat-value" id="kpi-total-discounts">$0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Report Tabs: Reporte 1 vs Reporte 2 -->
+        <div class="report-tabs-bar" style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
+          <button class="btn btn-primary" id="tab-report-1" style="flex: 1 1 auto; justify-content: center;">
+            <span data-icon="receipt"></span>
+            <span>Reporte 1: Ventas por Ticket</span>
+          </button>
+          <button class="btn btn-secondary" id="tab-report-2" style="flex: 1 1 auto; justify-content: center;">
+            <span data-icon="list-ordered"></span>
+            <span>Reporte 2: Detallado por Platillo</span>
+          </button>
+        </div>
+
+        <!-- Report 1 Table Container -->
+        <div class="card" id="container-report-1">
+          <div class="card-header">
+            <div class="card-title">
+              <span data-icon="receipt"></span>
+              <span>Reporte de Ventas por Ticket</span>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th>No. Orden</th>
+                  <th>Fecha y Hora</th>
+                  <th>Tipo</th>
+                  <th>Cliente</th>
+                  <th>Método Pago</th>
+                  <th>Subtotal</th>
+                  <th>Descuento</th>
+                  <th>Total</th>
+                  <th>Cajero</th>
+                  <th style="text-align: right;">Ticket</th>
+                </tr>
+              </thead>
+              <tbody id="report-1-table-body">
+                <!-- Dynamic Report 1 Rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Report 2 Table Container (Detailed with Order Number) -->
+        <div class="card" id="container-report-2" style="display: none;">
+          <div class="card-header">
+            <div class="card-title">
+              <span data-icon="list-ordered"></span>
+              <span>Reporte Detallado por Producto (Con Número de Orden Vinculado)</span>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th>No. Orden</th>
+                  <th>Fecha</th>
+                  <th>Platillo / Producto</th>
+                  <th>Categoría</th>
+                  <th>Tipo Ración</th>
+                  <th>Cantidad</th>
+                  <th>Precio Unitario</th>
+                  <th>Subtotal</th>
+                  <th>Método Pago</th>
+                  <th>Cliente</th>
+                </tr>
+              </thead>
+              <tbody id="report-2-table-body">
+                <!-- Dynamic Report 2 Rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ========================================== -->
+      <!-- 6. VISTA: USUARIOS (ADMIN ONLY) -->
+      <!-- ========================================== -->
+      <section id="view-users" class="page-view">
+        <div class="page-header">
+          <div class="page-title-group">
+            <h1><span data-icon="user-cog"></span> Gestión de Usuarios y Accesos</h1>
+            <p>Control de perfiles de Administradores y Cajeros con seguridad de accesos RBAC</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-primary" id="btn-new-user-modal">
+              <span data-icon="user-plus"></span>
+              <span>Nuevo Usuario</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="table-responsive">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Usuario</th>
+                  <th>Rol</th>
+                  <th>Permisos de Acceso</th>
+                  <th>Estado</th>
+                  <th style="text-align: right;">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="users-table-body">
+                <!-- Dynamic User Rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- 7. VISTA: CONFIGURACIONES (ADMIN ONLY) -->
+      <!-- ========================================== -->
+      <section id="view-settings" class="page-view">
+        <div class="page-header">
+          <div class="page-title-group">
+            <h1><span data-icon="settings"></span> Configuraciones del Sistema</h1>
+            <p>Datos del negocio para tickets, ajuste de impresora térmica POS y respaldos de base de datos</p>
+          </div>
+        </div>
+
+        <div class="settings-grid">
+          
+          <!-- Card: Business Profile Info (Row 1, Left) -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span data-icon="store"></span>
+                <span>Datos del Negocio (Aparecen en Tickets)</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <form id="form-business-settings">
+                <div class="form-group">
+                  <label class="form-label">Nombre del Negocio</label>
+                  <input type="text" id="setting-business-name" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Eslogan / Subtítulo</label>
+                  <input type="text" id="setting-slogan">
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">RFC</label>
+                    <input type="text" id="setting-rfc">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Teléfono</label>
+                    <input type="text" id="setting-phone">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Dirección Completa</label>
+                  <textarea id="setting-address" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Mensaje al Pie del Ticket</label>
+                  <input type="text" id="setting-ticket-footer">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                  <span data-icon="save"></span>
+                  <span>Guardar Información</span>
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Card: POS Printer Settings (Row 1, Right) -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span data-icon="printer"></span>
+                <span>Configuración de Impresora POS</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <form id="form-printer-settings">
+                <div class="form-group">
+                  <label class="form-label">Tamaño de Papel Térmico</label>
+                  <select id="setting-paper-width">
+                    <option value="80mm">80 mm (Estándar POS grande)</option>
+                    <option value="58mm">58 mm (POS compacto / móvil)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Tamaño de Fuente en Impresión</label>
+                  <select id="setting-font-size">
+                    <option value="small">Pequeña</option>
+                    <option value="medium" selected>Mediana (Recomendada)</option>
+                    <option value="large">Grande</option>
+                  </select>
+                </div>
+                <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem; margin-top: 1rem;">
+                  <input type="checkbox" id="setting-show-logo" style="width: auto;">
+                  <label for="setting-show-logo" style="font-weight: 600; font-size: 0.9rem;">Imprimir Logotipo de A La Leña en Ticket</label>
+                </div>
+                <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
+                  <input type="checkbox" id="setting-auto-cut" checked style="width: auto;">
+                  <label for="setting-auto-cut" style="font-weight: 600; font-size: 0.9rem;">Comando de Autocorte al Finalizar</label>
+                </div>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.5rem;">
+                  <button type="button" class="btn btn-secondary" id="btn-test-print-ticket" style="flex: 1 1 140px; justify-content: center;">
+                    <span data-icon="eye"></span>
+                    <span>Probar Ticket</span>
+                  </button>
+                  <button type="submit" class="btn btn-primary" style="flex: 1 1 140px; justify-content: center;">
+                    <span data-icon="save"></span>
+                    <span>Guardar Ajustes</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Card: Database Backups (Row 2, Left) -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span data-icon="database"></span>
+                <span>Respaldos y Restauración</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div style="display: flex; flex-direction: column; gap: 1rem;">
+                
+                <!-- Download Backups -->
+                <div style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); min-width: 0;">
+                  <h4 style="font-size: 0.95rem; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.4rem;">
+                    <span data-icon="download"></span> Descargar Copia de Seguridad
+                  </h4>
+                  <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                    Exporte los registros del sistema (ventas, menú, clientes, stock) en formatos estándar.
+                  </p>
+                  <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                    <button class="btn btn-amber btn-sm" id="btn-download-sql-backup" style="width: 100%;">
+                      <span data-icon="file-code"></span>
+                      <span>Descargar Respaldo MySQL (.SQL)</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Upload & Restore Backups -->
+                <div style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); min-width: 0;">
+                  <h4 style="font-size: 0.95rem; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.4rem; color: var(--primary-700);">
+                    <span data-icon="upload-cloud"></span> Cargar y Restaurar Respaldo
+                  </h4>
+                  <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                    Seleccione un archivo de volcado <strong>.SQL</strong> previo para restaurarlo en MySQL.
+                  </p>
+                  
+                  <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+                    <!-- Restore SQL Form -->
+                    <form id="form-restore-sql" style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                      <input type="file" id="input-restore-sql" accept=".sql" required style="font-size: 0.78rem; padding: 0.3rem; flex: 1 1 140px; min-width: 0;">
+                      <button type="submit" class="btn btn-outline btn-sm" style="white-space: nowrap;">Cargar y Restaurar .SQL</button>
+                    </form>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Card: Factory Reset / Wipe Database (Row 2, Right - Beside POS Printer) -->
+          <div class="card" style="border: 1.5px solid #fca5a5; background: #fffcfc; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div class="card-header" style="background: #fef2f2; border-bottom: 1px solid #fee2e2;">
+                <div class="card-title" style="color: #b91c1c;">
+                  <span data-icon="alert-triangle"></span>
+                  <span>Zona de Peligro: Reiniciar Base de Datos</span>
+                </div>
+                <span class="badge badge-danger">Acción Destructiva</span>
+              </div>
+              <div class="card-body">
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                  <div>
+                    <h4 style="font-size: 1rem; font-weight: 700; color: #991b1b; margin-bottom: 0.4rem;">
+                      Restaurar o Eliminar la Base de Datos e Iniciar desde Cero
+                    </h4>
+                    <p style="font-size: 0.85rem; color: #7f1d1d; line-height: 1.45; margin-bottom: 0.75rem;">
+                      Elimina todas las ventas, comandas, productos, clientes y registros del inventario. La base de datos se reinicializa y se crea el <strong>Usuario Administrador por defecto</strong> para ingresar a la aplicación.
+                    </p>
+                    
+                    <div style="background: rgba(254, 242, 242, 0.9); border: 1px dashed #fca5a5; border-radius: var(--radius-md); padding: 0.65rem 0.85rem; margin-bottom: 0.75rem; font-size: 0.83rem;">
+                      <div style="color: #991b1b; font-weight: 700; margin-bottom: 0.3rem;">Credenciales de acceso tras el reinicio:</div>
+                      <div style="display: flex; gap: 1rem; flex-wrap: wrap; color: #1e293b;">
+                        <div>👤 Usuario: <code style="background: #ffffff; padding: 1px 5px; border-radius: 3px; border: 1px solid #fca5a5; font-weight: bold; color: #991b1b;">admin</code></div>
+                        <div>🔑 Contraseña: <code style="background: #ffffff; padding: 1px 5px; border-radius: 3px; border: 1px solid #fca5a5; font-weight: bold; color: #991b1b;">admin123</code></div>
+                      </div>
+                    </div>
+
+                    <p style="font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.35rem;">
+                      <span data-icon="alert-triangle" style="color: var(--amber-600);"></span>
+                      <span>Descargue un respaldo antes de continuar si desea conservar los datos.</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="padding: 0 1.25rem 1.25rem 1.25rem;">
+              <button type="button" class="btn btn-danger" id="btn-open-reset-modal" style="width: 100%; padding: 0.75rem 1rem; font-size: 0.92rem; box-shadow: 0 4px 14px rgba(220, 38, 38, 0.25);">
+                <span data-icon="rotate-cw"></span>
+                <span>Restablecer / Reiniciar Base de Datos</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODALS -->
+  <!-- ========================================== -->
+
+  <!-- 1. CHECKOUT MODAL -->
+  <div class="modal-overlay" id="modal-checkout">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span data-icon="credit-card"></span>
+          <span>Procesar Cobro de Venta</span>
+        </div>
+        <button class="btn-icon modal-close-btn" data-close-modal="modal-checkout">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="text-align: center; margin-bottom: 1.25rem;">
+          <span style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Total a Cobrar:</span>
+          <div style="font-size: 2.2rem; font-weight: 800; color: var(--primary-700);" id="checkout-total-display">$0.00</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Método de Pago</label>
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;" id="payment-method-selector">
+            <button type="button" class="payment-opt-btn active" data-method="cash">
+              <span data-icon="dollar-sign"></span>
+              <span>Efectivo</span>
+            </button>
+            <button type="button" class="payment-opt-btn" data-method="card">
+              <span data-icon="credit-card"></span>
+              <span>Tarjeta</span>
+            </button>
+            <button type="button" class="payment-opt-btn" data-method="transfer">
+              <span data-icon="rotate-cw"></span>
+              <span>Transf.</span>
+            </button>
+            <button type="button" class="payment-opt-btn" data-method="mixed">
+              <span data-icon="plus-minus"></span>
+              <span>Mixto</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group" id="cash-payment-fields">
+          <label class="form-label">Monto Recibido ($)</label>
+          <input type="number" id="checkout-amount-paid" step="0.5" style="font-size: 1.3rem; font-weight: 700; text-align: center;" placeholder="0.00">
+          
+          <!-- Quick Cash Bill Pills -->
+          <div style="display: flex; gap: 0.4rem; margin-top: 0.5rem; justify-content: center;">
+            <button type="button" class="quick-cash-btn" data-val="exact">Exacto</button>
+            <button type="button" class="quick-cash-btn" data-val="100">$100</button>
+            <button type="button" class="quick-cash-btn" data-val="200">$200</button>
+            <button type="button" class="quick-cash-btn" data-val="500">$500</button>
+          </div>
+        </div>
+
+        <div style="background: var(--bg-subtle); padding: 0.85rem 1rem; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: space-between; margin-top: 1rem;">
+          <span style="font-weight: 700; font-size: 1rem;">Cambio a Entregar:</span>
+          <span style="font-size: 1.4rem; font-weight: 800; color: var(--success-600);" id="checkout-change-display">$0.00</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close-modal="modal-checkout">Cancelar</button>
+        <button type="button" class="btn btn-primary btn-lg" id="btn-confirm-checkout">
+          <span data-icon="printer"></span>
+          <span>Finalizar e Imprimir Ticket</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. TICKET PREVIEW & PRINT MODAL -->
+  <div class="modal-overlay" id="modal-ticket-preview">
+    <div class="modal-box modal-lg">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span data-icon="receipt"></span>
+          <span id="ticket-modal-title">Ticket de Venta</span>
+        </div>
+        <button class="btn-icon modal-close-btn" data-close-modal="modal-ticket-preview">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="ticket-preview-container">
+          <div id="printable-ticket-area">
+            <!-- Dynamic Ticket Template -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close-modal="modal-ticket-preview">Cerrar</button>
+        <button type="button" class="btn btn-amber" id="btn-download-ticket-pdf">
+          <span data-icon="file-text"></span>
+          <span>Descargar Ticket Digital (.PDF)</span>
+        </button>
+        <button type="button" class="btn btn-primary" id="btn-print-ticket-physical">
+          <span data-icon="printer"></span>
+          <span>Imprimir Ticket Físico (POS)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. CUSTOMER PURCHASE HISTORY MODAL -->
+  <div class="modal-overlay" id="modal-customer-history">
+    <div class="modal-box modal-lg">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span data-icon="history"></span>
+          <span id="customer-history-title">Historial de Compras del Cliente</span>
+        </div>
+        <button class="btn-icon modal-close-btn" data-close-modal="modal-customer-history">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="customer-history-summary-box" style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.25rem; display: flex; gap: 1.5rem; flex-wrap: wrap;">
+          <!-- Customer summary metrics -->
+        </div>
+
+        <h4 style="font-size: 0.95rem; margin-bottom: 0.6rem; color: var(--text-main);">Órdenes y Consumos Previos:</h4>
+        <div class="table-responsive" id="customer-history-table-container" style="max-height: 380px;">
+          <table class="table-custom">
+            <thead>
+              <tr>
+                <th>No. Orden</th>
+                <th>Fecha y Hora</th>
+                <th>Detalle de Platillos Consumidos</th>
+                <th>Método</th>
+                <th>Total</th>
+                <th style="text-align: right;">Ticket</th>
+              </tr>
+            </thead>
+            <tbody id="customer-history-orders-body">
+              <!-- Dynamic orders rows -->
+            </tbody>
+          </table>
+          <div id="customer-history-sentinel" class="scroll-sentinel" style="display: none; padding: 0.75rem; justify-content: center; align-items: center; gap: 0.5rem; color: var(--text-muted); font-size: 0.82rem;">
+            <div class="spinner" style="width: 16px; height: 16px;"></div>
+            <span>Cargando más órdenes anteriores...</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close-modal="modal-customer-history">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. CUSTOMER FORM MODAL (CREATE / EDIT) -->
+  <div class="modal-overlay" id="modal-customer-form">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span data-icon="user-plus"></span>
+          <span id="customer-form-title">Registrar Nuevo Cliente</span>
+        </div>
+        <button class="btn-icon modal-close-btn" data-close-modal="modal-customer-form">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+      <form id="customer-form">
+        <input type="hidden" id="cust-form-id">
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="cust-first-name">Nombre *</label>
+              <input type="text" id="cust-first-name" placeholder="Ej. Manuel" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cust-last-name">Apellidos *</label>
+              <input type="text" id="cust-last-name" placeholder="Ej. Pech Canché" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="cust-phone">Número de Teléfono *</label>
+            <input type="tel" id="cust-phone" placeholder="Ej. 999-123-4567" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="cust-address">Dirección de Entrega / Domicilio *</label>
+            <textarea id="cust-address" rows="2" placeholder="Calle, número, cruzamientos y colonia..." required></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="cust-notes">Notas / Preferencias del Cliente</label>
+            <input type="text" id="cust-notes" placeholder="Ej. Cochinita bien doradita, salsa aparte">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close-modal="modal-customer-form">Cancelar</button>
+          <button type="submit" class="btn btn-primary">
+            <span data-icon="save"></span>
+            <span>Guardar Cliente</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 5. PRODUCT FORM MODAL (INVENTORY & PORTION PRICING) -->
+  <div class="modal-overlay" id="modal-product-form">
+    <div class="modal-box modal-lg">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span data-icon="package"></span>
+          <span id="product-form-title">Registrar Platillo / Producto</span>
+        </div>
+        <button class="btn-icon modal-close-btn" data-close-modal="modal-product-form">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+      <form id="product-form">
+        <input type="hidden" id="prod-form-id">
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="prod-code">Código / SKU</label>
+              <input type="text" id="prod-code" placeholder="Ej. PLAT-001">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="prod-category">Categoría *</label>
+              <select id="prod-category" required></select>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="prod-name">Nombre del Platillo *</label>
+            <input type="text" id="prod-name" placeholder="Ej. Poc Chuc Especial con Frijol Kabax" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="prod-desc">Descripción / Ingredientes</label>
+            <textarea id="prod-desc" rows="2" placeholder="Detalles de preparación a la leña, guarniciones incluidas..."></textarea>
+          </div>
+
+          <!-- PORTION PRICING SECTION -->
+          <div style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 1rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+              <span style="font-weight: 700; font-size: 0.9rem; color: var(--primary-700);">Configuración de Precios y Raciones:</span>
+              <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
+                <input type="checkbox" id="prod-has-half" style="width: auto;">
+                <span>Habilitar Venta por Media Ración</span>
+              </label>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="prod-price">Precio Ración Completa ($) *</label>
+                <input type="number" id="prod-price" step="0.5" min="0" placeholder="150.00" required>
+              </div>
+
+              <div class="form-group" id="group-prod-half-price" style="display: none;">
+                <label class="form-label" for="prod-half-price">Precio Media Ración ($) *</label>
+                <input type="number" id="prod-half-price" step="0.5" min="0" placeholder="90.00">
+                <span class="form-text">Asignado manualmente por el negocio.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="prod-cost">Costo de Preparación ($)</label>
+                <input type="number" id="prod-cost" step="0.5" min="0" placeholder="60.00">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="prod-stock">Stock / Existencias Disponibles</label>
+              <input type="number" id="prod-stock" step="0.5" min="0" placeholder="25">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="prod-min-stock">Stock Mínimo de Alerta</label>
+              <input type="number" id="prod-min-stock" step="1" min="1" placeholder="5">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="prod-unit">Unidad de Medida</label>
+              <input type="text" id="prod-unit" placeholder="orden, ración, pieza, litro" value="orden">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close-modal="modal-product-form">Cancelar</button>
+          <button type="submit" class="btn btn-primary">
+            <span data-icon="save"></span>
+            <span>Guardar Platillo</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 6. STOCK ADJUSTMENT MODAL -->
+  <div class="modal-overlay" id="modal-stock-adjust">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span data-icon="plus-minus"></span>
+          <span>Ajustar Stock de Platillo</span>
+        </div>
+        <button class="btn-icon modal-close-btn" data-close-modal="modal-stock-adjust">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+      <form id="stock-adjust-form">
+        <input type="hidden" id="adjust-prod-id">
+        <div class="modal-body">
+          <div style="margin-bottom: 1rem;">
+            <div style="font-weight: 700; font-size: 1.05rem;" id="adjust-prod-name">Cochinita Pibil</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">Stock actual: <strong id="adjust-prod-current-stock">20</strong></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Tipo de Movimiento</label>
+            <div style="display: flex; gap: 0.5rem;">
+              <button type="button" class="btn btn-success adjust-type-btn active" data-type="add" style="flex: 1;">
+                <span data-icon="plus"></span> Incrementar (+ Stock)
+              </button>
+              <button type="button" class="btn btn-secondary adjust-type-btn" data-type="sub" style="flex: 1;">
+                <span data-icon="minus"></span> Disminuir (- Merma)
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="adjust-amount">Cantidad a Modificar</label>
+            <input type="number" id="adjust-amount" step="0.5" min="0.5" required placeholder="Ej. 10">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="adjust-reason">Motivo / Razón del Ajuste</label>
+            <input type="text" id="adjust-reason" placeholder="Ej. Nueva tanda lista del horno de leña, merma por cocina..." required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close-modal="modal-stock-adjust">Cancelar</button>
+          <button type="submit" class="btn btn-primary">
+            <span>Confirmar Ajuste</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 7. DINING TABLE ACCOUNT MODAL -->
+  <div class="modal-overlay" id="modal-dining-account">
+    <div class="modal-box modal-lg">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span data-icon="utensils"></span>
+          <span id="dining-modal-table-title">Mesa 1 - Cuenta de Comensal</span>
+        </div>
+        <button class="btn-icon modal-close-btn" data-close-modal="modal-dining-account">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="dining-account-layout">
+          
+          <!-- Column 1: Add items to table -->
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <h4 style="font-size: 0.95rem; color: var(--primary-700); font-weight: 700;">Agregar Consumo a la Mesa:</h4>
+            
+            <div class="form-group">
+              <label class="form-label">Comensal o Cliente Asignado:</label>
+              <input type="text" id="dining-guest-name" placeholder="Nombre del comensal o familia...">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="dining-product-search-input">Buscar Platillo por Nombre:</label>
+              <div class="search-input-wrapper" style="margin-bottom: 0.4rem;">
+                <span data-icon="search"></span>
+                <input type="text" id="dining-product-search-input" placeholder="Escribe el nombre para filtrar platillos..." autocomplete="off">
+              </div>
+              <select id="dining-add-product-select"></select>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Porción:</label>
+                <select id="dining-add-portion-select">
+                  <option value="full">Ración Completa</option>
+                  <option value="half">Media Ración</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Cantidad:</label>
+                <input type="number" id="dining-add-qty" value="1" min="0.5" step="0.5">
+              </div>
+            </div>
+
+            <button type="button" class="btn btn-amber" id="btn-dining-add-item-to-table" style="margin-top: 0.25rem;">
+              <span data-icon="plus-circle"></span>
+              <span>Agregar a la Cuenta</span>
+            </button>
+          </div>
+
+          <!-- Column 2: Current Account Items & Total -->
+          <div style="display: flex; flex-direction: column; justify-content: space-between; background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <div>
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                <h4 style="font-size: 0.95rem; font-weight: 700;">Consumo Acumulado:</h4>
+                <span id="dining-account-status-badge" class="badge badge-warning">Ocupada</span>
+              </div>
+              <div class="dining-items-list" id="dining-modal-items-list">
+                <!-- Dynamic Dining Items -->
+              </div>
+            </div>
+
+            <div style="margin-top: 1rem; border-top: 1.5px dashed var(--border-color); padding-top: 0.75rem;">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-weight: 700; font-size: 1.1rem;">TOTAL CUENTA:</span>
+                <span style="font-weight: 800; font-size: 1.5rem; color: var(--primary-700);" id="dining-modal-total-display">$0.00</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content: space-between;">
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-dining-reset-table" style="color: var(--danger-600);">
+          <span data-icon="x-circle"></span>
+          <span>Liberar Mesa</span>
+        </button>
+
+        <div class="modal-footer-actions-group" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button type="button" class="btn btn-amber" id="btn-dining-pre-check">
+            <span data-icon="printer"></span>
+            <span>Pre-cuenta</span>
+          </button>
+          <button type="button" class="btn btn-primary" id="btn-dining-transfer-to-cashier">
+            <span data-icon="check-circle-2"></span>
+            <span>Cobrar en Caja</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7.5 HELD / PAUSED ORDERS MODAL -->
+  <div class="modal-overlay" id="modal-held-orders">
+    <div class="modal-box modal-lg">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span data-icon="pause-circle"></span>
+          <span>Órdenes de Venta en Espera (Pausadas)</span>
+        </div>
+        <button class="btn-icon modal-close-btn" data-close-modal="modal-held-orders">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        
+        <!-- Action to Pause current cart if items exist -->
+        <div id="hold-current-cart-section" style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 1.25rem;">
+          <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--primary-700);">
+            Pausar la Orden Actual del Carrito
+          </div>
+          <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+            Guarda temporalmente los platillos seleccionados para atender a otro cliente y reanudar esta venta más tarde.
+          </p>
+          <div style="display: flex; gap: 0.5rem;">
+            <input type="text" id="hold-order-note" placeholder="Nota o referencia opcional (ej. Señor de playera roja, Pedido para llevar...)" style="flex: 1;">
+            <button type="button" class="btn btn-amber" id="btn-confirm-hold-cart">
+              <span data-icon="pause-circle"></span>
+              <span>Guardar en Espera</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- List of currently held orders -->
+        <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem;">Ventas Pausadas en Memoria:</h4>
+        <div class="table-responsive" style="max-height: 280px;">
+          <table class="table-custom">
+            <thead>
+              <tr>
+                <th>Hora</th>
+                <th>Cliente / Referencia</th>
+                <th>Platillos</th>
+                <th>Total</th>
+                <th style="text-align: right;">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="held-orders-table-body">
+              <!-- Dynamic Held Orders -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close-modal="modal-held-orders">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. USER FORM MODAL -->
+  <div class="modal-overlay" id="modal-user-form">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span data-icon="user-plus"></span>
+          <span id="user-form-title">Registrar Nuevo Usuario</span>
+        </div>
+        <button class="btn-icon modal-close-btn" data-close-modal="modal-user-form">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+      <form id="user-form">
+        <input type="hidden" id="user-form-id">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="user-form-name">Nombre Completo *</label>
+            <input type="text" id="user-form-name" placeholder="Ej. Juan Pech" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="user-form-username">Nombre de Usuario (Login) *</label>
+            <input type="text" id="user-form-username" placeholder="Ej. juanp" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="user-form-password">Contraseña *</label>
+            <input type="password" id="user-form-password" placeholder="Mínimo 6 caracteres...">
+            <span class="form-text" id="user-pw-helper">Dejar en blanco para mantener la contraseña actual al editar.</span>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="user-form-role">Rol y Nivel de Acceso *</label>
+              <select id="user-form-role" required>
+                <option value="cashier">Cajero (Caja, Comedor, Clientes)</option>
+                <option value="admin">Administrador (Acceso Total)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="user-form-status">Estado *</label>
+              <select id="user-form-status" required>
+                <option value="active">Activo</option>
+                <option value="inactive">Inactivo</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close-modal="modal-user-form">Cancelar</button>
+          <button type="submit" class="btn btn-primary">
+            <span data-icon="save"></span>
+            <span>Guardar Usuario</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 9. CATEGORIES MANAGEMENT MODAL -->
+  <div class="modal-overlay" id="modal-categories">
+    <div class="modal-box modal-lg">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span data-icon="tags"></span>
+          <span>Gestión de Categorías del Catálogo</span>
+        </div>
+        <button class="btn-icon modal-close-btn" data-close-modal="modal-categories">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        
+        <!-- Form to Add/Edit Category -->
+        <form id="category-form" style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 1.25rem;">
+          <input type="hidden" id="cat-form-id">
+          <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.75rem; color: var(--primary-700);" id="cat-form-title">
+            Crear Nueva Categoría
+          </div>
+          <div class="form-row">
+            <div class="form-group" style="flex: 2;">
+              <label class="form-label" for="cat-name">Nombre de la Categoría *</label>
+              <input type="text" id="cat-name" placeholder="Ej. Caldos y Sopas, Especiales..." required>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label" for="cat-icon">Icono Vectorial</label>
+              <select id="cat-icon">
+                <option value="utensils">Platillos / Cubiertos</option>
+                <option value="flame">Fuego / A La Leña</option>
+                <option value="sandwich">Tacos / Tortas</option>
+                <option value="soup">Caldos / Sopas / Calientes</option>
+                <option value="fish">Pescados / Mariscos</option>
+                <option value="cookie">Botanas / Entradas / Snacks</option>
+                <option value="beer">Cervezas (Nacionales / Artesanales)</option>
+                <option value="wine">Vinos / Licores / Botellas</option>
+                <option value="martini">Coctelería / Tragos Preparados</option>
+                <option value="cup-soda">Bebidas / Aguas Frescas / Refrescos</option>
+                <option value="coffee">Cafetería / Infusiones</option>
+                <option value="cake">Postres / Dulces Regionales</option>
+                <option value="sparkles">Especialidades / Recomendados</option>
+                <option value="concierge-bell">Servicio / Mesas / Atención</option>
+                <option value="truck">A Domicilio / Reparto</option>
+                <option value="package">Paquetes / Desechables / Combos</option>
+                <option value="tags">General / Etiqueta</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="cat-desc">Descripción (Opcional)</label>
+            <input type="text" id="cat-desc" placeholder="Breve descripción o detalle...">
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-cat-edit" style="display: none;">Cancelar</button>
+            <button type="submit" class="btn btn-primary btn-sm">
+              <span data-icon="save"></span>
+              <span id="btn-save-cat-text">Guardar Categoría</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- Current Categories List -->
+        <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem;">Categorías Activas en el Sistema:</h4>
+        <div class="table-responsive" style="max-height: 280px;">
+          <table class="table-custom">
+            <thead>
+              <tr>
+                <th>Icono</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Platillos Asignados</th>
+                <th style="text-align: right;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="categories-table-body">
+              <!-- Dynamic Categories -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close-modal="modal-categories">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. DINING TABLES MANAGEMENT MODAL -->
+  <div class="modal-overlay" id="modal-manage-tables">
+    <div class="modal-box modal-lg">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span data-icon="layout-grid"></span>
+          <span>Configuración y Gestión de Mesas</span>
+        </div>
+        <button class="btn-icon modal-close-btn" data-close-modal="modal-manage-tables">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+      <div class="modal-body">
+        
+        <!-- Form to Add/Edit Table -->
+        <form id="table-form" style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 1.25rem;">
+          <input type="hidden" id="tbl-form-id">
+          <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.75rem; color: var(--primary-700);" id="tbl-form-title">
+            Agregar Nueva Mesa al Comedor
+          </div>
+          <div class="form-row">
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label" for="tbl-number">Número de Mesa *</label>
+              <input type="number" id="tbl-number" min="1" step="1" placeholder="Ej. 9" required>
+            </div>
+            <div class="form-group" style="flex: 2;">
+              <label class="form-label" for="tbl-name">Nombre / Ubicación de la Mesa *</label>
+              <input type="text" id="tbl-name" placeholder="Ej. Mesa 9 (Terraza Alta), Barra 2..." required>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label" for="tbl-capacity">Capacidad (Personas)</label>
+              <input type="number" id="tbl-capacity" min="1" step="1" value="4">
+            </div>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.25rem;">
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-table-edit" style="display: none;">Cancelar</button>
+            <button type="submit" class="btn btn-primary btn-sm">
+              <span data-icon="save"></span>
+              <span id="btn-save-table-text">Guardar Mesa</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- Current Tables List -->
+        <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem;">Mesas Registradas en el Comedor:</h4>
+        <div class="table-responsive" style="max-height: 280px;">
+          <table class="table-custom">
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>Nombre / Ubicación</th>
+                <th>Capacidad</th>
+                <th>Estado Actual</th>
+                <th style="text-align: right;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tables-admin-table-body">
+              <!-- Dynamic Tables Rows -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close-modal="modal-manage-tables">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESET DATABASE MODAL -->
+  <div class="modal-overlay" id="modal-reset-database">
+    <div class="modal-box" style="max-width: 580px;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #991b1b 0%, #b91c1c 100%);">
+        <div class="modal-title">
+          <span data-icon="alert-triangle"></span>
+          <span>Reinicio de Fábrica de Base de Datos</span>
+        </div>
+        <button class="btn-icon modal-close-btn" data-close-modal="modal-reset-database">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+      <form id="form-reset-database">
+        <div class="modal-body" style="padding: 1.25rem;">
+          <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem; display: flex; gap: 0.75rem; align-items: flex-start;">
+            <div style="color: #dc2626; flex-shrink: 0; margin-top: 2px;">
+              <span data-icon="alert-triangle"></span>
+            </div>
+            <div>
+              <strong style="color: #991b1b; font-size: 0.95rem; display: block; margin-bottom: 0.25rem;">¡Advertencia: Acción Irreversible!</strong>
+              <p style="font-size: 0.84rem; color: #7f1d1d; margin: 0; line-height: 1.4;">
+                Se borrarán todas las ventas, órdenes, clientes, catálogo de productos y movimientos de stock actuales. El sistema reiniciará y se creará el usuario administrador por defecto:
+              </p>
+              <div style="background: rgba(255,255,255,0.7); border: 1px dashed #f87171; border-radius: 6px; padding: 0.5rem 0.75rem; margin-top: 0.6rem; font-size: 0.85rem; color: #1e293b;">
+                <div>👤 <strong>Usuario:</strong> <code>admin</code></div>
+                <div>🔑 <strong>Contraseña:</strong> <code>admin123</code></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label class="form-label" style="font-weight: 700;">Seleccione el modo de inicio:</label>
+            <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+              <label style="display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.75rem; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); cursor: pointer; background: var(--bg-surface);">
+                <input type="radio" name="reset_mode" value="clean" checked style="margin-top: 3px; width: auto;">
+                <div>
+                  <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-main);">🧹 Limpio Total desde Cero (Recomendado)</div>
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">Base de datos vacía lista para registrar tus propios platillos y clientes. Incluye solo mesas del comedor y usuario Administrador.</div>
+                </div>
+              </label>
+
+              <label style="display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.75rem; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); cursor: pointer; background: var(--bg-surface);">
+                <input type="radio" name="reset_mode" value="demo" style="margin-top: 3px; width: auto;">
+                <div>
+                  <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-main);">🍲 Con Menú y Catálogo Yucateco de Demostración</div>
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">Carga el menú regional preconfigurado de A La Leña (platillos con media ración, bebidas, postres, mesas) y usuarios admin y cajero.</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0.5rem;">
+            <label class="form-label" style="font-weight: 700; color: #991b1b;">
+              Para confirmar, escribe la palabra <span style="background: #fee2e2; padding: 2px 6px; border-radius: 4px; letter-spacing: 1px;">REINICIAR</span> abajo:
+            </label>
+            <input type="text" id="input-confirm-reset" placeholder="Escribe REINICIAR aquí..." autocomplete="off" style="border: 2px solid #f87171; font-weight: 700; text-transform: uppercase;" required>
+          </div>
+        </div>
+        <div class="modal-footer" style="background: #fef2f2; border-top: 1px solid #fee2e2;">
+          <button type="button" class="btn btn-secondary" data-close-modal="modal-reset-database">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-danger" id="btn-submit-reset-db" disabled style="opacity: 0.5; cursor: not-allowed;">
+            <span data-icon="trash-2"></span>
+            <span>Sí, Eliminar y Reiniciar Todo</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATIONS CONTAINER -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- JAVASCRIPT MODULES -->
+  <script src="js/ui.js?v=5"></script>
+  <script src="js/api.js?v=5"></script>
+  <script src="js/auth.js?v=5"></script>
+  <script src="js/ticketPrinter.js?v=5"></script>
+  <script src="js/pos.js?v=5"></script>
+  <script src="js/dining.js?v=5"></script>
+  <script src="js/customers.js?v=5"></script>
+  <script src="js/inventory.js?v=5"></script>
+  <script src="js/reports.js?v=5"></script>
+  <script src="js/users.js?v=5"></script>
+  <script src="js/settings.js?v=5"></script>
+  <script src="js/app.js?v=5"></script>
+
+</body>
+</html>

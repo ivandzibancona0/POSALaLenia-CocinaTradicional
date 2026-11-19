@@ -953,6 +953,10 @@
         </div>
       </div>
       <div class="modal-footer">
+        <button type="button" class="btn btn-danger" id="btn-cancel-sale-from-ticket" style="display: none; margin-right: auto;">
+          <span data-icon="x-circle"></span>
+          <span>Cancelar Orden</span>
+        </button>
         <button type="button" class="btn btn-secondary" data-close-modal="modal-ticket-preview">Cerrar</button>
         <button type="button" class="btn btn-amber" id="btn-download-ticket-pdf">
           <span data-icon="file-text"></span>
@@ -963,6 +967,48 @@
           <span>Imprimir Ticket Físico (POS)</span>
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- 2B. CANCEL SALE / ORDER CONFIRMATION MODAL -->
+  <div class="modal-overlay" id="modal-cancel-sale">
+    <div class="modal-box" style="max-width: 480px;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #991b1b 0%, #dc2626 100%);">
+        <div class="modal-title">
+          <span data-icon="x-circle"></span>
+          <span>Cancelar Orden</span>
+        </div>
+        <button class="btn-icon modal-close-btn" data-close-modal="modal-cancel-sale">
+          <span data-icon="x"></span>
+        </button>
+      </div>
+      <form id="form-cancel-sale">
+        <div class="modal-body" style="padding: 1.25rem;">
+          <p style="margin-bottom: 1rem; font-size: 0.92rem; color: var(--text-main);">
+            ¿Confirma que desea cancelar la orden <strong id="cancel-sale-order-label">#ORD</strong>? Esta acción excluirá el ticket de las ventas y reportes activos.
+          </p>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label" for="cancel-sale-reason">Motivo de cancelación (opcional):</label>
+            <input type="text" id="cancel-sale-reason" placeholder="Ej. Error de cobro, cambio de pedido..." maxlength="200">
+          </div>
+
+          <div class="form-group" style="display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-subtle);">
+            <input type="checkbox" id="cancel-sale-restore-stock" checked style="width: auto; margin-top: 3px;">
+            <label for="cancel-sale-restore-stock" style="cursor: pointer; margin: 0;">
+              <strong style="display: block; font-size: 0.9rem; color: var(--text-main);">Devolver Platillos</strong>
+              <span style="font-size: 0.78rem; color: var(--text-muted);">Si se marca, las raciones regresan al inventario. Si se desmarca, la orden se cancela sin devolver stock (merma).</span>
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close-modal="modal-cancel-sale">Volver</button>
+          <button type="submit" class="btn btn-danger" id="btn-confirm-cancel-sale">
+            <span data-icon="x-circle"></span>
+            <span>Confirmar Cancelación</span>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 

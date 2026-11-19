@@ -134,6 +134,7 @@ const api = {
   sales: {
     create: (saleData) => api.request('/sales', { method: 'POST', body: saleData }),
     getById: (id) => api.request(`/sales/${id}`),
+    cancel: (id, data) => api.request(`/sales/${id}/cancel`, { method: 'POST', body: data }),
     getSummary: (startDate, endDate) => api.request(`/sales/report/summary?startDate=${startDate}&endDate=${endDate}`),
     getReport1: (startDate, endDate) => api.request(`/sales/report/general?startDate=${startDate}&endDate=${endDate}`),
     getReport2: (startDate, endDate) => api.request(`/sales/report/detailed-products?startDate=${startDate}&endDate=${endDate}`),

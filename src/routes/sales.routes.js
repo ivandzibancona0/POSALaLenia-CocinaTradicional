@@ -267,6 +267,108 @@ router.get('/:id', authenticateToken, async (req, res) => {
   }
 });
 
+// POST /api/sales/:id/cancel - Cancel a completed sale/order with optional stock restoration (Admin only)
+router.post('/:id/cancel', authenticateToken, requireAdmin, async (req, res) => {
+  const idParam = req.params.id;
+  const reason = (req.body && typeof req.body.reason === 'string' ? req.body.reason : '').trim();
+  const restoreStock = req.body && req.body.restore_stock !== undefined
+    ? Boolean(req.body.restore_stock)
+    : true;
+
+  let conn;
+  try {
+    conn = await db.getPool().getConnection();
+    await conn.beginTransaction();
+
+    const isNumericId = /^\d+$/.test(String(idParam));
+    const [sales] = await conn.query(
+      isNumericId
+        ? 'SELECT * FROM sales WHERE id = ? FOR UPDATE'
+        : 'SELECT * FROM sales WHERE order_number = ? FOR UPDATE',
+      [idParam]
+    );
+
+    if (!sales || sales.length === 0) {
+      await conn.rollback();
+      return res.status(404).json({ success: false, message: 'Venta u orden no encontrada' });
+    }
+
+    const sale = sales[0];
+    if (sale.status === 'cancelled') {
+      await conn.rollback();
+      return res.status(400).json({ success: false, message: `La orden #${sale.order_number} ya fue cancelada previamente` });
+    }
+
+    const actorName = (req.user && (req.user.name || req.user.username)) || 'Administrador';
+    const cancelStamp = new Date().toLocaleString('es-MX');
+    const auditNote = `[CANCELADA por ${actorName} | ${cancelStamp} | Devolver platillos: ${restoreStock ? 'Sí' : 'No'}${reason ? ` | Motivo: ${reason}` : ''}]`;
+    const updatedNotes = sale.notes ? `${sale.notes}\n${auditNote}` : auditNote;
+
+    await conn.query(
+      `UPDATE sales SET status = 'cancelled', notes = ? WHERE id = ?`,
+      [updatedNotes, sale.id]
+    );
+
+    let restoredItemsCount = 0;
+    if (restoreStock) {
+      const [items] = await conn.query('SELECT * FROM sale_items WHERE sale_id = ?', [sale.id]);
+      for (const item of items) {
+        if (!item.product_id) continue;
+
+        const [prods] = await conn.query(
+          'SELECT id, stock FROM products WHERE id = ? FOR UPDATE',
+          [item.product_id]
+        );
+        if (!prods || prods.length === 0) continue;
+
+        const qty = parseFloat(item.quantity) || 0;
+        const stockFactor = item.portion_type === 'half' ? 0.5 : 1.0;
+        const stockReturn = qty * stockFactor;
+        const prevStock = parseFloat(prods[0].stock) || 0;
+        const newStock = prevStock + stockReturn;
+
+        await conn.query(
+          'UPDATE products SET stock = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+          [newStock, item.product_id]
+        );
+
+        const moveReason = `Cancelación #${sale.order_number} (${qty} x ${item.portion_type === 'half' ? 'Media ración' : 'Ración completa'})${reason ? ` - ${reason}` : ''}`;
+        await conn.query(
+          `INSERT INTO stock_movements (product_id, type, quantity, previous_stock, new_stock, reason, user_id)
+           VALUES (?, 'cancellation', ?, ?, ?, ?, ?)`,
+          [item.product_id, stockReturn, prevStock, newStock, moveReason, req.user.id]
+        );
+        restoredItemsCount++;
+      }
+    }
+
+    await conn.commit();
+
+    res.json({
+      success: true,
+      message: restoreStock
+        ? `Orden #${sale.order_number} cancelada y platillos devueltos al inventario`
+        : `Orden #${sale.order_number} cancelada sin devolución de inventario (merma)`,
+      sale_id: sale.id,
+      order_number: sale.order_number,
+      stock_restored: restoreStock,
+      restored_items: restoredItemsCount
+    });
+  } catch (err) {
+    if (conn) {
+      try {
+        await conn.rollback();
+      } catch (rollbackErr) {
+        console.error('Error al hacer rollback al cancelar orden:', rollbackErr);
+      }
+    }
+    console.error('Error al cancelar orden:', err);
+    res.status(500).json({ success: false, message: 'Error al cancelar la orden' });
+  } finally {
+    if (conn) conn.release();
+  }
+});
+
 // ==========================================
 // REPORTS ROUTES
 // ==========================================

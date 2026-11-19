@@ -195,10 +195,16 @@ const reports = {
           <td><strong style="color: var(--text-main); font-size: 0.95rem;">${formatMoney(s.total)}</strong></td>
           <td style="font-size: 0.85rem;">${s.cashier_name || 'N/A'}</td>
           <td style="text-align: right;">
-            <button class="btn btn-secondary btn-sm" onclick="customers.viewSaleTicket('${s.order_number}')">
-              <span data-icon="receipt"></span>
-              <span>Ticket</span>
-            </button>
+            <div style="display: inline-flex; gap: 0.35rem; justify-content: flex-end;">
+              <button class="btn btn-secondary btn-sm" onclick="customers.viewSaleTicket('${s.order_number}')">
+                <span data-icon="receipt"></span>
+                <span>Ticket</span>
+              </button>
+              <button class="btn btn-secondary btn-sm" style="color: var(--danger-600);" onclick="ticketPrinter.openCancelSaleModal({ saleId: ${s.id}, orderNumber: '${s.order_number}', onSuccess: () => reports.loadReports() })" title="Cancelar orden">
+                <span data-icon="x-circle"></span>
+                <span>Cancelar</span>
+              </button>
+            </div>
           </td>
         </tr>
       `;

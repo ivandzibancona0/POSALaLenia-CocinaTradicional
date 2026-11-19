@@ -477,17 +477,21 @@ const dining = {
 
   async resetActiveTable() {
     if (!this.activeTableId) return;
+    if (typeof auth !== 'undefined' && !auth.isAdmin()) {
+      showToast('Acceso denegado. Solo los administradores pueden liberar o cancelar mesas.', 'warning');
+      return;
+    }
     if (!confirm('¿Desea liberar y reiniciar esta mesa? Se borrarán los consumos pendientes no cobrados.')) return;
 
     try {
       const res = await api.dining.resetTable(this.activeTableId);
       if (res.success) {
         closeModal('modal-dining-account');
-        showToast('Mesa liberada correctamente', 'info');
+        showToast(res.message || 'Mesa liberada correctamente', 'info');
         this.loadTables();
       }
     } catch (err) {
-      showToast('Error al liberar mesa', 'error');
+      showToast(err.message || 'Error al liberar mesa', 'error');
     }
   }
 };

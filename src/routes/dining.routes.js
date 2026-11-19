@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { db } = require('../config/database');
-const { authenticateToken } = require('../middleware/auth');
+const { authenticateToken, requireAdmin } = require('../middleware/auth');
 
 // GET /api/dining/tables - List all tables with their active accounts and totals
 router.get('/tables', authenticateToken, async (req, res) => {
@@ -190,6 +190,51 @@ router.get('/tables/:id/pre-check', authenticateToken, async (req, res) => {
   } catch (err) {
     console.error('Error al generar pre-corte:', err);
     res.status(500).json({ success: false, message: 'Error al generar ticket de pre-corte' });
+  }
+});
+
+// POST /api/dining/tables/:id/reset - Release/reset table and clear unpaid items (Admin only)
+router.post('/tables/:id/reset', authenticateToken, requireAdmin, async (req, res) => {
+  const { id } = req.params;
+  let conn;
+
+  try {
+    conn = await db.getPool().getConnection();
+    await conn.beginTransaction();
+
+    const [tables] = await conn.query('SELECT * FROM dining_tables WHERE id = ? FOR UPDATE', [id]);
+    if (!tables || tables.length === 0) {
+      await conn.rollback();
+      return res.status(404).json({ success: false, message: 'Mesa no encontrada' });
+    }
+
+    const table = tables[0];
+
+    await conn.query('DELETE FROM dining_items WHERE table_id = ?', [id]);
+    await conn.query(`
+      UPDATE dining_tables SET
+        status = 'free',
+        customer_id = NULL,
+        guest_name = NULL,
+        notes = NULL,
+        opened_at = NULL
+      WHERE id = ?
+    `, [id]);
+
+    await conn.commit();
+    res.json({ success: true, message: `Mesa ${table.table_number} liberada correctamente` });
+  } catch (err) {
+    if (conn) {
+      try {
+        await conn.rollback();
+      } catch (rollbackErr) {
+        console.error('Error al hacer rollback al liberar mesa:', rollbackErr);
+      }
+    }
+    console.error('Error al liberar mesa:', err);
+    res.status(500).json({ success: false, message: 'Error al liberar mesa' });
+  } finally {
+    if (conn) conn.release();
   }
 });
 

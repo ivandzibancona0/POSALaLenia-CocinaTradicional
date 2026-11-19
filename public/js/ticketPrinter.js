@@ -2,6 +2,8 @@
 
 const ticketPrinter = {
   currentTicketData: null,
+  cachedLogo: null,
+  pendingCancelSale: null,
 
   // Render HTML Ticket for Preview and Printing
   renderTicketHtml(data) {
@@ -10,6 +12,7 @@ const ticketPrinter = {
     const sale = data.sale || {};
     const items = data.items || [];
     const paperWidth = settings.paper_width || '80mm';
+    const fontSize = ['small', 'medium', 'large'].includes(settings.font_size) ? settings.font_size : 'medium';
 
     const isPreCheck = data.ticket_type === 'pre_check';
     const orderNum = sale.order_number || data.order_number || 'S/N';
@@ -51,7 +54,7 @@ const ticketPrinter = {
     const payMethod = (sale.payment_method || 'Efectivo').toUpperCase();
 
     const html = `
-      <div class="pos-ticket paper-${paperWidth}">
+      <div class="pos-ticket paper-${paperWidth} font-${fontSize}">
         <div class="ticket-header">
           ${settings.show_logo ? `<img src="assets/logo-a-la-leña.jpg" class="ticket-logo" alt="Logo">` : ''}
           <div class="ticket-business-name">${settings.business_name || 'A LA LEÑA'}</div>
@@ -160,6 +163,16 @@ const ticketPrinter = {
     return html;
   },
 
+  // Check whether current ticket represents a real cancellable sale for an admin
+  canCancelTicket(ticketData) {
+    if (!ticketData || ticketData.ticket_type === 'pre_check') return false;
+    if (typeof auth === 'undefined' || !auth.isAdmin()) return false;
+    const sale = ticketData.sale;
+    if (!sale || !sale.id) return false;
+    if (sale.status === 'cancelled') return false;
+    return true;
+  },
+
   // Open Preview Modal
   showTicketModal(ticketData) {
     this.renderTicketHtml(ticketData);
@@ -169,117 +182,434 @@ const ticketPrinter = {
         ? 'Pre-corte de Comedor / Cuenta de Mesa' 
         : `Ticket de Venta #${ticketData.sale ? ticketData.sale.order_number : ticketData.order_number}`;
     }
+
+    const btnCancel = document.getElementById('btn-cancel-sale-from-ticket');
+    if (btnCancel) {
+      btnCancel.style.display = this.canCancelTicket(ticketData) ? '' : 'none';
+    }
+
     openModal('modal-ticket-preview');
+  },
+
+  // Open reusable cancel-order modal (from Reports or Ticket Preview)
+  openCancelSaleModal({ saleId, orderNumber, closeTicketModal = false, onSuccess = null }) {
+    if (typeof auth === 'undefined' || !auth.isAdmin()) {
+      showToast('Acceso denegado. Solo los administradores pueden cancelar órdenes.', 'warning');
+      return;
+    }
+
+    this.pendingCancelSale = { saleId, orderNumber, closeTicketModal, onSuccess };
+
+    const labelEl = document.getElementById('cancel-sale-order-label');
+    if (labelEl) labelEl.textContent = `#${orderNumber || saleId}`;
+
+    const reasonInput = document.getElementById('cancel-sale-reason');
+    if (reasonInput) reasonInput.value = '';
+
+    const restoreCheck = document.getElementById('cancel-sale-restore-stock');
+    if (restoreCheck) restoreCheck.checked = true;
+
+    openModal('modal-cancel-sale');
+  },
+
+  openCancelFromCurrentTicket() {
+    if (!this.canCancelTicket(this.currentTicketData)) return;
+    const sale = this.currentTicketData.sale;
+    this.openCancelSaleModal({
+      saleId: sale.id,
+      orderNumber: sale.order_number || this.currentTicketData.order_number,
+      closeTicketModal: true,
+      onSuccess: () => {
+        if (typeof reports !== 'undefined' && typeof reports.loadReports === 'function') {
+          const reportsView = document.getElementById('view-reports');
+          if (reportsView && reportsView.classList.contains('active')) {
+            reports.loadReports();
+          }
+        }
+      }
+    });
+  },
+
+  async submitCancelSale() {
+    if (!this.pendingCancelSale) return;
+
+    const { saleId, closeTicketModal, onSuccess } = this.pendingCancelSale;
+    const reasonEl = document.getElementById('cancel-sale-reason');
+    const restoreEl = document.getElementById('cancel-sale-restore-stock');
+    const submitBtn = document.getElementById('btn-confirm-cancel-sale');
+
+    const reason = reasonEl ? reasonEl.value.trim() : '';
+    const restoreStock = restoreEl ? restoreEl.checked : true;
+
+    if (submitBtn) submitBtn.disabled = true;
+
+    try {
+      const res = await api.sales.cancel(saleId, { reason, restore_stock: restoreStock });
+      if (res.success) {
+        closeModal('modal-cancel-sale');
+        if (closeTicketModal) {
+          closeModal('modal-ticket-preview');
+        }
+        if (this.currentTicketData && this.currentTicketData.sale && this.currentTicketData.sale.id === saleId) {
+          this.currentTicketData.sale.status = 'cancelled';
+        }
+        this.pendingCancelSale = null;
+        showToast(res.message || 'Orden cancelada correctamente', 'success');
+
+        if (restoreStock && typeof pos !== 'undefined' && typeof pos.loadInitialData === 'function') {
+          pos.loadInitialData();
+        }
+        if (typeof onSuccess === 'function') {
+          onSuccess();
+        }
+      }
+    } catch (err) {
+      showToast(err.message || 'Error al cancelar la orden', 'error');
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+    }
   },
 
   // Physical POS Print
   printPhysical() {
+    const logoImg = document.querySelector('#printable-ticket-area .ticket-logo');
+    if (logoImg && !logoImg.complete) {
+      const triggerPrint = () => window.print();
+      logoImg.addEventListener('load', triggerPrint, { once: true });
+      logoImg.addEventListener('error', triggerPrint, { once: true });
+      return;
+    }
     window.print();
   },
 
+  // Load business logo as DataURL with natural dimensions for jsPDF
+  loadLogoForPdf(logoUrl = 'assets/logo-a-la-leña.jpg') {
+    if (this.cachedLogo) {
+      return Promise.resolve(this.cachedLogo);
+    }
+
+    const loadImage = (src) => new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        try {
+          const width = img.naturalWidth || img.width;
+          const height = img.naturalHeight || img.height;
+          if (!width || !height) {
+            resolve(null);
+            return;
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+          resolve({ dataUrl, width, height });
+        } catch (err) {
+          reject(err);
+        }
+      };
+      img.onerror = reject;
+      img.src = src;
+    });
+
+    return loadImage(logoUrl)
+      .catch(() => loadImage(encodeURI(logoUrl)))
+      .then((result) => {
+        if (result) this.cachedLogo = result;
+        return result;
+      })
+      .catch((err) => {
+        console.warn('No se pudo cargar el logotipo para el ticket PDF:', err);
+        return null;
+      });
+  },
+
+  // Resolve PDF page geometry & typography based on printer settings
+  getPdfLayoutConfig(settings = {}) {
+    const is58mm = settings.paper_width === '58mm';
+    const pageWidth = is58mm ? 58 : 80;
+    const marginX = is58mm ? 4 : 5;
+    const contentWidth = pageWidth - (marginX * 2);
+    const centerX = pageWidth / 2;
+    const rightX = pageWidth - marginX;
+    const sizeKey = ['small', 'medium', 'large'].includes(settings.font_size) ? settings.font_size : 'medium';
+
+    const scales = is58mm
+      ? {
+          small: { title: 8.5, subtitle: 7.5, body: 6, lineHeight: 3.0, titleLineHeight: 3.8, subtitleLineHeight: 3.4 },
+          medium: { title: 9.5, subtitle: 8.5, body: 7, lineHeight: 3.5, titleLineHeight: 4.2, subtitleLineHeight: 3.8 },
+          large: { title: 10.5, subtitle: 9.5, body: 8, lineHeight: 4.0, titleLineHeight: 4.6, subtitleLineHeight: 4.2 }
+        }
+      : {
+          small: { title: 10, subtitle: 9, body: 7, lineHeight: 3.5, titleLineHeight: 4.4, subtitleLineHeight: 4.0 },
+          medium: { title: 11, subtitle: 10, body: 8, lineHeight: 4.0, titleLineHeight: 4.8, subtitleLineHeight: 4.4 },
+          large: { title: 12, subtitle: 11, body: 9, lineHeight: 4.5, titleLineHeight: 5.2, subtitleLineHeight: 4.8 }
+        };
+
+    return {
+      is58mm,
+      pageWidth,
+      marginX,
+      contentWidth,
+      centerX,
+      rightX,
+      ...scales[sizeKey]
+    };
+  },
+
+  // Render ticket content onto a jsPDF instance and return final required height (mm)
+  renderPdfContent(doc, data, layout, logoData = null) {
+    const settings = data.settings || {};
+    const sale = data.sale || {};
+    const items = data.items || [];
+    const isPreCheck = data.ticket_type === 'pre_check';
+    const orderNum = sale.order_number || data.order_number || 'ORD-000';
+
+    const drawWrapped = (text, x, currentY, maxWidth, stepY, options = {}) => {
+      const safeText = String(text ?? '');
+      const lines = doc.splitTextToSize(safeText, maxWidth);
+      lines.forEach((line, idx) => {
+        doc.text(line, x, currentY + (idx * stepY), options);
+      });
+      return currentY + (lines.length * stepY);
+    };
+
+    let y = 9;
+    const showLogo = settings.show_logo == 1 || settings.show_logo === true;
+    if (showLogo && logoData && logoData.dataUrl && logoData.width && logoData.height) {
+      const logoWidth = layout.is58mm ? 16 : 20;
+      const logoHeight = logoWidth * (logoData.height / logoData.width);
+      const logoX = (layout.pageWidth - logoWidth) / 2;
+      doc.addImage(logoData.dataUrl, 'JPEG', logoX, y - 3, logoWidth, logoHeight);
+      y += logoHeight + 3;
+    }
+
+    doc.setFont('courier', 'bold');
+    doc.setFontSize(layout.title);
+    y = drawWrapped(
+      settings.business_name || 'A LA LEÑA',
+      layout.centerX,
+      y,
+      layout.contentWidth,
+      layout.titleLineHeight,
+      { align: 'center' }
+    );
+
+    y += 1;
+    doc.setFont('courier', 'normal');
+    doc.setFontSize(layout.body);
+    y = drawWrapped(
+      settings.slogan || 'Cocina Tradicional Yucateca',
+      layout.centerX,
+      y,
+      layout.contentWidth,
+      layout.lineHeight,
+      { align: 'center' }
+    );
+
+    y = drawWrapped(
+      `RFC: ${settings.rfc || 'XEXX010101000'}`,
+      layout.centerX,
+      y,
+      layout.contentWidth,
+      layout.lineHeight,
+      { align: 'center' }
+    );
+    y = drawWrapped(
+      `Tel: ${settings.phone || '999-123-4567'}`,
+      layout.centerX,
+      y,
+      layout.contentWidth,
+      layout.lineHeight,
+      { align: 'center' }
+    );
+
+    y += 1.5;
+    doc.line(layout.marginX, y, layout.rightX, y);
+
+    y += 4.5;
+    doc.setFont('courier', 'bold');
+    doc.setFontSize(layout.subtitle);
+    const headerTitle = isPreCheck
+      ? `PRE-CORTE: ${data.table_name || 'Mesa'}`
+      : `ORDEN: #${orderNum}`;
+    y = drawWrapped(headerTitle, layout.centerX, y, layout.contentWidth, layout.subtitleLineHeight, { align: 'center' });
+
+    y += 1;
+    doc.setFont('courier', 'normal');
+    doc.setFontSize(layout.body);
+    y = drawWrapped(
+      `Fecha: ${formatDate(sale.created_at || data.printed_at || new Date())}`,
+      layout.marginX,
+      y,
+      layout.contentWidth,
+      layout.lineHeight
+    );
+    y = drawWrapped(
+      `Atendio: ${sale.cashier_name || data.waiter || 'Cajero'}`,
+      layout.marginX,
+      y,
+      layout.contentWidth,
+      layout.lineHeight
+    );
+
+    // Customer
+    const custName = sale.customer_first_name
+      ? `${sale.customer_first_name} ${sale.customer_last_name}`
+      : (data.guest_name || (data.customer ? data.customer.name : 'Publico General'));
+    const custPhone = sale.customer_phone || (data.customer ? data.customer.phone : '');
+    const custAddress = sale.customer_address || (data.customer ? data.customer.address : '');
+
+    y = drawWrapped(`Cliente: ${custName}`, layout.marginX, y, layout.contentWidth, layout.lineHeight);
+    if (custPhone) {
+      y = drawWrapped(`Tel: ${custPhone}`, layout.marginX, y, layout.contentWidth, layout.lineHeight);
+    }
+    if (custAddress) {
+      y = drawWrapped(`Dir: ${custAddress}`, layout.marginX, y, layout.contentWidth, layout.lineHeight);
+    }
+
+    y += 1.5;
+    doc.line(layout.marginX, y, layout.rightX, y);
+
+    y += 4.5;
+    doc.setFont('courier', 'bold');
+    doc.setFontSize(layout.body);
+    doc.text('CANT  PRODUCTO', layout.marginX, y);
+    doc.text('TOTAL', layout.rightX, y, { align: 'right' });
+    doc.line(layout.marginX, y + 1.2, layout.rightX, y + 1.2);
+
+    y += layout.lineHeight + 1.5;
+    doc.setFont('courier', 'normal');
+    doc.setFontSize(layout.body);
+    items.forEach(it => {
+      const name = it.product_name || it.name || '';
+      const portion = it.portion_type === 'half' ? ' (1/2)' : '';
+      const totalStr = formatMoney(it.subtotal || (it.quantity * it.unit_price));
+      const priceColWidth = Math.max(doc.getTextWidth(totalStr) + 2.5, layout.is58mm ? 16 : 19);
+      const descMaxWidth = Math.max(layout.contentWidth - priceColWidth, 20);
+      const itemLines = doc.splitTextToSize(`${it.quantity}x ${name}${portion}`, descMaxWidth);
+
+      itemLines.forEach((line, idx) => {
+        doc.text(line, layout.marginX, y + (idx * layout.lineHeight));
+      });
+      doc.text(totalStr, layout.rightX, y, { align: 'right' });
+      y += (itemLines.length * layout.lineHeight) + 0.5;
+    });
+
+    y += 1;
+    doc.line(layout.marginX, y, layout.rightX, y);
+
+    y += 4.5;
+    const discount = parseFloat(sale.discount) || 0;
+    if (discount > 0) {
+      doc.setFont('courier', 'normal');
+      doc.setFontSize(layout.body);
+      y = drawWrapped(
+        `Subtotal: ${formatMoney(sale.subtotal || data.total)}`,
+        layout.rightX,
+        y,
+        layout.contentWidth,
+        layout.lineHeight,
+        { align: 'right' }
+      );
+      y = drawWrapped(
+        `Descuento: -${formatMoney(discount)}`,
+        layout.rightX,
+        y,
+        layout.contentWidth,
+        layout.lineHeight,
+        { align: 'right' }
+      );
+    }
+
+    doc.setFont('courier', 'bold');
+    doc.setFontSize(layout.subtitle);
+    y = drawWrapped(
+      `TOTAL: ${formatMoney(sale.total ?? data.total ?? 0)}`,
+      layout.rightX,
+      y,
+      layout.contentWidth,
+      layout.subtitleLineHeight,
+      { align: 'right' }
+    );
+
+    if (!isPreCheck) {
+      y += 1;
+      doc.setFont('courier', 'normal');
+      doc.setFontSize(layout.body);
+      y = drawWrapped(
+        `Metodo: ${(sale.payment_method || 'Efectivo').toUpperCase()}`,
+        layout.marginX,
+        y,
+        layout.contentWidth,
+        layout.lineHeight
+      );
+      y = drawWrapped(
+        `Recibido: ${formatMoney(sale.amount_paid ?? sale.total ?? data.total ?? 0)}`,
+        layout.marginX,
+        y,
+        layout.contentWidth,
+        layout.lineHeight
+      );
+      y = drawWrapped(
+        `Cambio: ${formatMoney(sale.change_due || 0)}`,
+        layout.marginX,
+        y,
+        layout.contentWidth,
+        layout.lineHeight
+      );
+    }
+
+    y += 3;
+    doc.line(layout.marginX, y, layout.rightX, y);
+    y += 4.5;
+    doc.setFont('courier', 'normal');
+    doc.setFontSize(layout.body);
+    y = drawWrapped(
+      settings.ticket_footer || 'Gracias por su preferencia!',
+      layout.centerX,
+      y,
+      layout.contentWidth,
+      layout.lineHeight,
+      { align: 'center' }
+    );
+
+    return y + 4;
+  },
+
   // Digital PDF Export using jsPDF
-  downloadPdf() {
+  async downloadPdf() {
     if (!this.currentTicketData) {
       showToast('No hay información de ticket para exportar', 'warning');
       return;
     }
 
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: [80, 200] // 80mm thermal roll format in PDF
-    });
-
     const data = this.currentTicketData;
     const settings = data.settings || {};
     const sale = data.sale || {};
-    const items = data.items || [];
     const orderNum = sale.order_number || data.order_number || 'ORD-000';
+    const layout = this.getPdfLayoutConfig(settings);
+    const showLogo = settings.show_logo == 1 || settings.show_logo === true;
+    const logoData = showLogo ? await this.loadLogoForPdf() : null;
 
-    let y = 10;
-    doc.setFont('courier', 'bold');
-    doc.setFontSize(12);
-    doc.text(settings.business_name || 'A LA LEÑA', 40, y, { align: 'center' });
-
-    y += 5;
-    doc.setFont('courier', 'normal');
-    doc.setFontSize(8);
-    doc.text(settings.slogan || 'Cocina Tradicional Yucateca', 40, y, { align: 'center' });
-
-    y += 4;
-    doc.text(`RFC: ${settings.rfc || 'XEXX010101000'}`, 40, y, { align: 'center' });
-    y += 4;
-    doc.text(`Tel: ${settings.phone || '999-123-4567'}`, 40, y, { align: 'center' });
-
-    y += 5;
-    doc.line(5, y, 75, y);
-
-    y += 5;
-    doc.setFont('courier', 'bold');
-    doc.setFontSize(10);
-    doc.text(`ORDEN: #${orderNum}`, 40, y, { align: 'center' });
-
-    y += 5;
-    doc.setFont('courier', 'normal');
-    doc.setFontSize(8);
-    doc.text(`Fecha: ${formatDate(sale.created_at || new Date())}`, 5, y);
-    y += 4;
-    doc.text(`Atendio: ${sale.cashier_name || 'Cajero'}`, 5, y);
-
-    // Customer
-    const custName = sale.customer_first_name ? `${sale.customer_first_name} ${sale.customer_last_name}` : 'Publico General';
-    y += 4;
-    doc.text(`Cliente: ${custName}`, 5, y);
-    if (sale.customer_phone) {
-      y += 4;
-      doc.text(`Tel: ${sale.customer_phone}`, 5, y);
-    }
-    if (sale.customer_address) {
-      y += 4;
-      doc.text(`Dir: ${sale.customer_address.slice(0, 32)}`, 5, y);
-    }
-
-    y += 5;
-    doc.line(5, y, 75, y);
-
-    y += 5;
-    doc.setFont('courier', 'bold');
-    doc.text('CANT  PRODUCTO             TOTAL', 5, y);
-    doc.line(5, y + 1, 75, y + 1);
-
-    y += 5;
-    doc.setFont('courier', 'normal');
-    items.forEach(it => {
-      const name = (it.product_name || it.name || '').slice(0, 18);
-      const portion = it.portion_type === 'half' ? '(1/2)' : '';
-      const total = formatMoney(it.subtotal || (it.quantity * it.unit_price));
-      doc.text(`${it.quantity}x  ${name} ${portion}`, 5, y);
-      doc.text(total, 75, y, { align: 'right' });
-      y += 4;
+    // Pass 1: measure exact required height using active paper width, font scale & logo
+    const measureDoc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: [layout.pageWidth, 200]
     });
+    const requiredHeight = Math.max(Math.ceil(this.renderPdfContent(measureDoc, data, layout, logoData)), 80);
 
-    y += 2;
-    doc.line(5, y, 75, y);
-
-    y += 5;
-    doc.setFont('courier', 'bold');
-    doc.setFontSize(10);
-    doc.text(`TOTAL: ${formatMoney(sale.total || data.total)}`, 75, y, { align: 'right' });
-
-    y += 5;
-    doc.setFont('courier', 'normal');
-    doc.setFontSize(8);
-    doc.text(`Metodo: ${(sale.payment_method || 'Efectivo').toUpperCase()}`, 5, y);
-    y += 4;
-    doc.text(`Recibido: ${formatMoney(sale.amount_paid || sale.total)}`, 5, y);
-    y += 4;
-    doc.text(`Cambio: ${formatMoney(sale.change_due || 0)}`, 5, y);
-
-    y += 7;
-    doc.line(5, y, 75, y);
-    y += 5;
-    doc.text(settings.ticket_footer || 'Gracias por su preferencia!', 40, y, { align: 'center' });
+    // Pass 2: generate final PDF with exact dynamic page height
+    const doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: [layout.pageWidth, requiredHeight]
+    });
+    this.renderPdfContent(doc, data, layout, logoData);
 
     doc.save(`Ticket_${orderNum}.pdf`);
     showToast(`Ticket digital descargado: Ticket_${orderNum}.pdf`, 'success');
@@ -292,4 +622,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const btnPdf = document.getElementById('btn-download-ticket-pdf');
   if (btnPdf) btnPdf.addEventListener('click', () => ticketPrinter.downloadPdf());
+
+  const btnCancelFromTicket = document.getElementById('btn-cancel-sale-from-ticket');
+  if (btnCancelFromTicket) {
+    btnCancelFromTicket.addEventListener('click', () => ticketPrinter.openCancelFromCurrentTicket());
+  }
+
+  const formCancelSale = document.getElementById('form-cancel-sale');
+  if (formCancelSale) {
+    formCancelSale.addEventListener('submit', (e) => {
+      e.preventDefault();
+      ticketPrinter.submitCancelSale();
+    });
+  }
 });

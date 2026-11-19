@@ -32,6 +32,40 @@
   padding: 16px 12px;
 }
 
+/* Configurable Ticket Font Sizes */
+.pos-ticket.font-small {
+  font-size: 11px;
+}
+.pos-ticket.font-small .ticket-business-name { font-size: 13px; }
+.pos-ticket.font-small .ticket-order-box { font-size: 12px; }
+.pos-ticket.font-small .ticket-items-table,
+.pos-ticket.font-small .ticket-summary-table { font-size: 10px; }
+.pos-ticket.font-small .ticket-total-row { font-size: 13px; }
+.pos-ticket.font-small .ticket-slogan,
+.pos-ticket.font-small .ticket-business-info,
+.pos-ticket.font-small .ticket-meta-row,
+.pos-ticket.font-small .ticket-customer-box,
+.pos-ticket.font-small .ticket-footer { font-size: 9.5px; }
+
+.pos-ticket.font-large {
+  font-size: 15px;
+}
+.pos-ticket.font-large .ticket-business-name { font-size: 17px; }
+.pos-ticket.font-large .ticket-order-box { font-size: 16px; }
+.pos-ticket.font-large .ticket-items-table,
+.pos-ticket.font-large .ticket-summary-table { font-size: 14px; }
+.pos-ticket.font-large .ticket-total-row { font-size: 17px; }
+.pos-ticket.font-large .ticket-slogan,
+.pos-ticket.font-large .ticket-business-info,
+.pos-ticket.font-large .ticket-meta-row,
+.pos-ticket.font-large .ticket-customer-box,
+.pos-ticket.font-large .ticket-footer { font-size: 12.5px; }
+
+.pos-ticket.paper-58mm.font-small { font-size: 9.5px; }
+.pos-ticket.paper-58mm.font-small .ticket-items-table { font-size: 9px; }
+.pos-ticket.paper-58mm.font-large { font-size: 12.5px; }
+.pos-ticket.paper-58mm.font-large .ticket-items-table { font-size: 11.5px; }
+
 .ticket-header {
   text-align: center;
   margin-bottom: 10px;
@@ -145,7 +179,29 @@
   body * {
     visibility: hidden;
   }
-  
+
+  #modal-ticket-preview,
+  #modal-ticket-preview .modal-box,
+  #modal-ticket-preview .modal-body,
+  #modal-ticket-preview .ticket-preview-container {
+    position: static !important;
+    transform: none !important;
+    overflow: visible !important;
+    max-height: none !important;
+    max-width: none !important;
+    width: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  #modal-ticket-preview .modal-header,
+  #modal-ticket-preview .modal-footer {
+    display: none !important;
+  }
+
   #printable-ticket-area,
   #printable-ticket-area * {
     visibility: visible;
@@ -167,6 +223,16 @@
     margin: 0;
     padding: 0;
     width: 100% !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .pos-ticket .ticket-logo {
+    display: block;
+    margin: 0 auto 6px;
+    filter: none;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
   .no-print {

@@ -163,16 +163,6 @@ const ticketPrinter = {
     return html;
   },
 
-  // Check whether current ticket represents a real cancellable sale for an admin
-  canCancelTicket(ticketData) {
-    if (!ticketData || ticketData.ticket_type === 'pre_check') return false;
-    if (typeof auth === 'undefined' || !auth.isAdmin()) return false;
-    const sale = ticketData.sale;
-    if (!sale || !sale.id) return false;
-    if (sale.status === 'cancelled') return false;
-    return true;
-  },
-
   // Open Preview Modal
   showTicketModal(ticketData) {
     this.renderTicketHtml(ticketData);
@@ -183,15 +173,10 @@ const ticketPrinter = {
         : `Ticket de Venta #${ticketData.sale ? ticketData.sale.order_number : ticketData.order_number}`;
     }
 
-    const btnCancel = document.getElementById('btn-cancel-sale-from-ticket');
-    if (btnCancel) {
-      btnCancel.style.display = this.canCancelTicket(ticketData) ? '' : 'none';
-    }
-
     openModal('modal-ticket-preview');
   },
 
-  // Open reusable cancel-order modal (from Reports or Ticket Preview)
+  // Open reusable cancel-order modal (from Reports)
   openCancelSaleModal({ saleId, orderNumber, closeTicketModal = false, onSuccess = null }) {
     if (typeof auth === 'undefined' || !auth.isAdmin()) {
       showToast('Acceso denegado. Solo los administradores pueden cancelar órdenes.', 'warning');
@@ -210,24 +195,6 @@ const ticketPrinter = {
     if (restoreCheck) restoreCheck.checked = true;
 
     openModal('modal-cancel-sale');
-  },
-
-  openCancelFromCurrentTicket() {
-    if (!this.canCancelTicket(this.currentTicketData)) return;
-    const sale = this.currentTicketData.sale;
-    this.openCancelSaleModal({
-      saleId: sale.id,
-      orderNumber: sale.order_number || this.currentTicketData.order_number,
-      closeTicketModal: true,
-      onSuccess: () => {
-        if (typeof reports !== 'undefined' && typeof reports.loadReports === 'function') {
-          const reportsView = document.getElementById('view-reports');
-          if (reportsView && reportsView.classList.contains('active')) {
-            reports.loadReports();
-          }
-        }
-      }
-    });
   },
 
   async submitCancelSale() {
@@ -622,11 +589,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const btnPdf = document.getElementById('btn-download-ticket-pdf');
   if (btnPdf) btnPdf.addEventListener('click', () => ticketPrinter.downloadPdf());
-
-  const btnCancelFromTicket = document.getElementById('btn-cancel-sale-from-ticket');
-  if (btnCancelFromTicket) {
-    btnCancelFromTicket.addEventListener('click', () => ticketPrinter.openCancelFromCurrentTicket());
-  }
 
   const formCancelSale = document.getElementById('form-cancel-sale');
   if (formCancelSale) {

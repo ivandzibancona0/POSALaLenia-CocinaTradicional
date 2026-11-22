@@ -28,6 +28,11 @@
 - **Gestión de Menú**: Creación y edición de productos con código, descripción, costo, precio de venta, precio de media porción y categoría.
 - **Control de Existencias en Tiempo Real**: Alertas de stock bajo e insignias dinámicas según disponibilidad.
 - **Kardex / Movimientos de Stock**: Registro auditable de entradas, salidas por venta, ajustes manuales, mermas y cancelaciones.
+- **Gestión de Activos, Inactivos y Eliminación Definitiva (Solo Administrador)**:
+  - Filtros por estado (*Solo Activos*, *Inactivos (Dados de baja)* y *Todos*) tanto en la tabla de **Inventario** como en el modal de **Categorías**, manteniendo **Caja** y **Comedor** estrictamente limitados a registros activos.
+  - **Baja lógica (`active = 0`)**: oculta platillos o categorías del catálogo operativo sin perder el historial de ventas ni de Kardex.
+  - **Reactivación (`PATCH .../restore`)**: devuelve registros inactivos al catálogo activo (alertando si la categoría asignada a un platillo también está inactiva).
+  - **Eliminación definitiva (`DELETE ...?permanent=true`)**: borra físicamente el registro en MySQL y libera su código SKU o nombre único, con validaciones de integridad (impide eliminar platillos con consumo activo en mesas abiertas o categorías con platillos activos).
 
 ### 👥 4. Directorio de Clientes
 - Registro de clientes con teléfono, dirección y notas.
@@ -168,7 +173,7 @@ POS - A La Leña/
 │   │   ├── auth.js            # Sesiones en sessionStorage y cierre tras 30 min de inactividad
 │   │   ├── customers.js       # Directorio e historial de clientes
 │   │   ├── dining.js          # Control de mesas, comandas y cuentas
-│   │   ├── inventory.js       # Gestión de platillos, categorías y stock
+│   │   ├── inventory.js       # Gestión de platillos, categorías, stock, filtros activo/inactivo, reactivación y borrado definitivo
 │   │   ├── pos.js             # Carrito, cálculo de cambio y proceso de venta
 │   │   ├── reports.js         # Reportes analíticos, CSV y cancelación de órdenes
 │   │   ├── settings.js        # Configuración del negocio, impresora y backups
@@ -186,7 +191,7 @@ POS - A La Leña/
 │   │   ├── backup.routes.js   # Configuraciones del negocio, exportación/importación SQL
 │   │   ├── customers.routes.js# Gestión de clientes
 │   │   ├── dining.routes.js   # Salón, mesas, comandas y liberación (admin)
-│   │   ├── products.routes.js # Catálogo de platillos y categorías
+│   │   ├── products.routes.js # Catálogo de platillos/categorías, baja lógica, reactivación y eliminación permanente
 │   │   ├── sales.routes.js    # Ventas, cancelaciones con devolución, kardex y reportes
 │   │   └── users.routes.js    # Administración de usuarios y contraseñas
 │   └── utils/

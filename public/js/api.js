@@ -71,14 +71,19 @@ const api = {
     create: (data) => api.request('/products', { method: 'POST', body: data }),
     update: (id, data) => api.request(`/products/${id}`, { method: 'PUT', body: data }),
     adjustStock: (id, adjustment, reason) => api.request(`/products/${id}/adjust-stock`, { method: 'POST', body: { adjustment, reason } }),
-    delete: (id) => api.request(`/products/${id}`, { method: 'DELETE' })
+    restore: (id) => api.request(`/products/${id}/restore`, { method: 'PATCH' }),
+    delete: (id, permanent = false) => api.request(`/products/${id}${permanent ? '?permanent=true' : ''}`, { method: 'DELETE' })
   },
 
   categories: {
-    getAll: () => api.request('/categories'),
+    getAll: (status = 'active') => {
+      const qs = status && status !== 'active' ? `?status=${encodeURIComponent(status)}` : '';
+      return api.request(`/categories${qs}`);
+    },
     create: (data) => api.request('/categories', { method: 'POST', body: data }),
     update: (id, data) => api.request(`/categories/${id}`, { method: 'PUT', body: data }),
-    delete: (id) => api.request(`/categories/${id}`, { method: 'DELETE' })
+    restore: (id) => api.request(`/categories/${id}/restore`, { method: 'PATCH' }),
+    delete: (id, permanent = false) => api.request(`/categories/${id}${permanent ? '?permanent=true' : ''}`, { method: 'DELETE' })
   },
 
   // Dining Tables Endpoints

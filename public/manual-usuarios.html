@@ -233,7 +233,7 @@
               <tr><td><strong>Comedor:</strong> abrir mesas, agregar/quitar platillos, pre-cuenta, cobrar en caja</td><td class="check-yes">Sí</td><td class="check-yes">Sí</td></tr>
               <tr><td><strong>Comedor:</strong> liberar / cancelar mesa con consumos pendientes</td><td class="check-no">No</td><td class="check-yes">Sí</td></tr>
               <tr><td><strong>Clientes:</strong> registrar, editar y consultar historial de compras</td><td class="check-yes">Sí</td><td class="check-yes">Sí</td></tr>
-              <tr><td><strong>Inventario:</strong> crear/editar platillos, categorías, precios y ajustes de stock</td><td class="check-no">No</td><td class="check-yes">Sí</td></tr>
+              <tr><td><strong>Inventario:</strong> crear/editar platillos y categorías, ajustar stock, dar de baja, reactivar o eliminar definitivamente</td><td class="check-no">No</td><td class="check-yes">Sí</td></tr>
               <tr><td><strong>Reportes:</strong> KPIs financieros, reportes por ticket/platillo, exportar CSV</td><td class="check-no">No</td><td class="check-yes">Sí</td></tr>
               <tr><td><strong>Cancelación de órdenes cobradas</strong> (con opción Devolver Platillos)</td><td class="check-no">No</td><td class="check-yes">Sí</td></tr>
               <tr><td><strong>Usuarios y Configuración:</strong> cuentas, impresora, backups `.SQL` y reinicio</td><td class="check-no">No</td><td class="check-yes">Sí</td></tr>
@@ -492,7 +492,7 @@
             </div>
             <div>
               <h2>7. Inventario y Catálogo de Platillos</h2>
-              <p class="section-subtitle">Gestión de menú, precios por ración/media ración, alertas de bajo stock y Kardex</p>
+              <p class="section-subtitle">Gestión de menú, precios por ración/media ración, filtros de estado (activos/inactivos), alertas de bajo stock y Kardex</p>
             </div>
           </div>
           <div class="role-badges">
@@ -501,10 +501,22 @@
         </div>
 
         <ol class="steps-list">
-          <li><div><strong>Categorías:</strong> usa el botón <strong>Categorías</strong> para crear, editar u ordenar las pestañas que aparecen en Caja.</div></li>
-          <li><div><strong>Crear o editar platillos:</strong> haz clic en <strong>Nuevo Platillo / Producto</strong>, asigna código, nombre, categoría, precio de ración completa y activa <em>¿Tiene media ración?</em> para indicar su precio reducido.</div></li>
-          <li><div><strong>Ajustar existencias y revisar stock bajo:</strong> filtra con <strong>Solo Bajo Stock</strong> para identificar platillos por agotarse y usa el ajuste de stock (indicando motivo) para registrar entradas o mermas en el Kardex auditable.</div></li>
+          <li><div><strong>Categorías y sus estados:</strong> usa el botón <strong>Categorías</strong> para crear, editar u ordenar las pestañas que aparecen en Caja. En el modal puedes alternar el filtro entre <em>Solo Activas</em>, <em>Inactivas (Dadas de baja)</em> y <em>Todas</em> para reactivar o eliminar definitivamente categorías que ya no contengan platillos activos.</div></li>
+          <li><div><strong>Crear o editar platillos:</strong> haz clic en <strong>Nuevo Platillo / Producto</strong>, asigna código, nombre, categoría, precio de ración completa y activa <em>Habilitar Venta por Media Ración</em> para indicar su precio reducido.</div></li>
+          <li><div><strong>Ajustar existencias y revisar stock bajo:</strong> filtra con <strong>Solo Bajo Stock</strong> para identificar platillos por agotarse y usa el botón <strong>Ajustar</strong> (indicando motivo) para registrar entradas o mermas en el Kardex auditable.</div></li>
+          <li><div><strong>Dar de baja (ocultar sin perder historial):</strong> pulsa el ícono ámbar de <strong>archivo (Dar de baja)</strong> en un platillo o categoría activa. Se ocultará de <em>Caja</em> y <em>Comedor</em>, pero conservará intacto su historial en Kardex y reportes.</div></li>
+          <li><div><strong>Reactivar o eliminar definitivamente:</strong> cambia el selector de estado a <strong>Inactivos (Dados de baja)</strong> o <strong>Todos los Estados</strong>. Sobre cualquier registro inactivo verás dos botones:
+            <br>• <strong>Reactivar:</strong> devuelve el platillo o categoría al catálogo activo al instante (si un platillo reactivado pertenece a una categoría inactiva, el sistema mostrará un aviso).
+            <br>• <strong>Eliminar definitivamente (papelera roja):</strong> borra el registro de forma permanente de MySQL y libera su código SKU o nombre para poder reutilizarlo.</div></li>
         </ol>
+
+        <div class="callout callout-warning">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+          <div>
+            <strong>Consideraciones sobre la Eliminación Definitiva</strong>
+            Eliminar permanentemente un platillo es <strong>irreversible</strong> y borra su historial de movimientos en Kardex (las ventas anteriores siguen conservando el nombre e importe en reportes). Por seguridad, el sistema bloquea el borrado definitivo si el platillo tiene consumos activos en una mesa abierta o si la categoría aún tiene platillos activos asignados.
+          </div>
+        </div>
       </section>
 
       <!-- 8. REPORTES Y CANCELACIÓN DE ÓRDENES -->
@@ -697,6 +709,14 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
             </button>
             <div class="faq-answer">Asegúrate de seleccionar el tamaño de papel de tu impresora térmica (58mm u 80mm), escala en <em>Tamaño real (100%)</em>, márgenes en <em>Ninguno / Mínimo</em> y desactivar <em>Encabezados y pies de página</em> en el diálogo de impresión de Edge.</div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-question">
+              <span>¿Cuál es la diferencia entre "Dar de baja" y "Eliminar definitivamente" un platillo o categoría?</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="faq-answer"><strong>Dar de baja</strong> desactiva el registro (<code>Inactivo</code>) para ocultarlo de Caja y Comedor sin perder su historial de Kardex ni auditoría; puedes reactivarlo cuando gustes desde el filtro <em>Inactivos (Dados de baja)</em>. <strong>Eliminar definitivamente</strong> (disponible solo sobre registros inactivos) borra físicamente la fila de MySQL, elimina su Kardex y libera el código SKU o nombre de categoría para volver a usarlo.</div>
           </div>
 
           <div class="faq-item">

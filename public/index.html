@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>A La Leña | Sistema Punto de Venta - Cocina Tradicional Yucateca</title>
   <link rel="icon" type="image/x-icon" href="assets/logo-a-la-leña.ico">
-  <meta name="description" content="Sistema POS para el restaurante y fondita A La Leña - Especialistas en comida regional yucateca a la leña.">
-  
+  <meta name="description"
+    content="Sistema POS para el restaurante y fondita A La Leña - Especialistas en comida regional yucateca a la leña.">
+
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
   <!-- jsPDF for Digital PDF Tickets -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -22,17 +26,23 @@
   <link rel="stylesheet" href="css/dining.css">
   <link rel="stylesheet" href="css/print.css">
 </head>
+
 <body>
 
   <!-- LOGIN SCREEN -->
-  <div id="login-screen" style="display: none; min-height: 100vh; background: radial-gradient(circle at center, #6b1515 0%, #300a0a 100%); align-items: center; justify-content: center; padding: 1.5rem;">
-    <div style="background: rgba(255, 255, 255, 0.98); border-radius: var(--radius-lg); box-shadow: var(--shadow-xl); width: 100%; max-width: 440px; padding: 2.5rem 2rem; border: 2px solid rgba(245, 158, 11, 0.4); text-align: center;">
-      
+  <div id="login-screen"
+    style="display: none; min-height: 100vh; background: radial-gradient(circle at center, #6b1515 0%, #300a0a 100%); align-items: center; justify-content: center; padding: 1.5rem;">
+    <div
+      style="background: rgba(255, 255, 255, 0.98); border-radius: var(--radius-lg); box-shadow: var(--shadow-xl); width: 100%; max-width: 440px; padding: 2.5rem 2rem; border: 2px solid rgba(245, 158, 11, 0.4); text-align: center;">
+
       <!-- Brand Logo -->
-      <img src="assets/logo-a-la-leña.jpg" alt="A La Leña Logo" style="width: 110px; height: 110px; border-radius: var(--radius-lg); object-fit: cover; border: 3px solid var(--amber-400); box-shadow: var(--shadow-md); margin-bottom: 1rem;">
-      
+      <img src="assets/logo-a-la-leña.jpg" alt="A La Leña Logo"
+        style="width: 110px; height: 110px; border-radius: var(--radius-lg); object-fit: cover; border: 3px solid var(--amber-400); box-shadow: var(--shadow-md); margin-bottom: 1rem;">
+
       <h1 style="font-size: 1.7rem; color: var(--primary-900); font-weight: 800; letter-spacing: 0.5px;">A LA LEÑA</h1>
-      <p style="font-size: 0.85rem; color: var(--amber-600); font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1.5rem;">Cocina Tradicional Yucateca</p>
+      <p
+        style="font-size: 0.85rem; color: var(--amber-600); font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 1.5rem;">
+        Cocina Tradicional Yucateca</p>
 
       <form id="login-form" style="text-align: left; display: flex; flex-direction: column; gap: 1rem;">
         <div class="form-group">
@@ -51,7 +61,8 @@
           </div>
         </div>
 
-        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 0.5rem;" id="btn-login-submit">
+        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 0.5rem;"
+          id="btn-login-submit">
           <span>Iniciar Sesión</span>
         </button>
       </form>
@@ -127,7 +138,8 @@
     <div class="mobile-drawer" id="mobile-drawer">
       <div class="drawer-header">
         <div class="brand-section">
-          <img src="assets/logo-a-la-leña.jpg" alt="Logo" style="width: 36px; height: 36px; border-radius: var(--radius-md);">
+          <img src="assets/logo-a-la-leña.jpg" alt="Logo"
+            style="width: 36px; height: 36px; border-radius: var(--radius-md);">
           <div>
             <div style="font-weight: 800; font-size: 1.1rem; line-height: 1;">A LA LEÑA</div>
             <div style="font-size: 0.7rem; color: var(--amber-400);">Cocina Yucateca</div>
@@ -188,7 +200,7 @@
 
           <!-- Left: Catalog & Search -->
           <div class="catalog-section">
-            
+
             <!-- Search Bar & Controls -->
             <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
               <div class="search-input-wrapper" style="flex: 1; min-width: 240px;">
@@ -226,11 +238,15 @@
                 <span>Orden de Venta</span>
               </div>
               <div style="display: flex; align-items: center; gap: 0.4rem;">
-                <button type="button" class="btn btn-warning btn-sm" id="btn-held-orders-indicator" onclick="pos.openHeldOrdersModal()" style="display: none; font-size: 0.75rem; padding: 0.2rem 0.55rem; background: var(--amber-400); color: #1e1e1e; font-weight: 700; border: none; border-radius: var(--radius-full);" title="Ver ventas en espera">
+                <button type="button" class="btn btn-warning btn-sm" id="btn-held-orders-indicator"
+                  onclick="pos.openHeldOrdersModal()"
+                  style="display: none; font-size: 0.75rem; padding: 0.2rem 0.55rem; background: var(--amber-400); color: #1e1e1e; font-weight: 700; border: none; border-radius: var(--radius-full);"
+                  title="Ver ventas en espera">
                   <span data-icon="pause-circle" style="width: 14px; height: 14px;"></span>
                   <span id="held-indicator-count">0</span> en espera
                 </button>
-                <button class="btn btn-secondary btn-sm" id="btn-clear-cart" title="Vaciar Carrito" style="background: rgba(255,255,255,0.2); color: white; border: none;">
+                <button class="btn btn-secondary btn-sm" id="btn-clear-cart" title="Vaciar Carrito"
+                  style="background: rgba(255,255,255,0.2); color: white; border: none;">
                   <span data-icon="trash-2"></span>
                 </button>
               </div>
@@ -241,9 +257,11 @@
               <div id="selected-customer-display" style="display: none;" class="selected-customer-pill">
                 <div class="selected-customer-details">
                   <span style="font-weight: 700; font-size: 0.85rem;" id="cart-customer-name">Don Manuel Pech</span>
-                  <span style="font-size: 0.75rem; color: var(--text-muted);" id="cart-customer-phone">999-555-1234</span>
+                  <span style="font-size: 0.75rem; color: var(--text-muted);"
+                    id="cart-customer-phone">999-555-1234</span>
                 </div>
-                <button class="btn-icon btn-sm" id="btn-remove-selected-customer" title="Quitar Cliente" style="color: var(--danger-600);">
+                <button class="btn-icon btn-sm" id="btn-remove-selected-customer" title="Quitar Cliente"
+                  style="color: var(--danger-600);">
                   <span data-icon="x"></span>
                 </button>
               </div>
@@ -251,7 +269,8 @@
               <div id="customer-search-box" style="display: flex; gap: 0.4rem;">
                 <div class="search-input-wrapper">
                   <span data-icon="user"></span>
-                  <input type="text" id="pos-customer-search-input" placeholder="Buscar cliente (nombre/tel)..." autocomplete="off">
+                  <input type="text" id="pos-customer-search-input" placeholder="Buscar cliente (nombre/tel)..."
+                    autocomplete="off">
                 </div>
                 <button class="btn btn-amber btn-sm" id="btn-quick-new-customer" title="Nuevo Cliente">
                   <span data-icon="user-plus"></span>
@@ -276,7 +295,8 @@
               <label class="form-label" style="font-size: 0.75rem; margin-bottom: 0.2rem;" for="pos-sale-notes">
                 Comentarios / Instrucciones de preparación:
               </label>
-              <textarea id="pos-sale-notes" class="cart-comments-textarea" placeholder="Ej. Sin cebolla morada, salsa habanera aparte..."></textarea>
+              <textarea id="pos-sale-notes" class="cart-comments-textarea"
+                placeholder="Ej. Sin cebolla morada, salsa habanera aparte..."></textarea>
             </div>
 
             <!-- Cart Footer & Totals -->
@@ -287,7 +307,8 @@
               </div>
               <div class="cart-summary-row">
                 <span>Descuento ($):</span>
-                <input type="number" id="cart-discount-input" value="0" min="0" step="1" style="width: 80px; padding: 0.2rem 0.4rem; text-align: right;">
+                <input type="number" id="cart-discount-input" value="0" min="0" step="1"
+                  style="width: 80px; padding: 0.2rem 0.4rem; text-align: right;">
               </div>
               <div class="cart-summary-row total">
                 <span>TOTAL:</span>
@@ -298,7 +319,8 @@
                 <button class="btn btn-secondary" id="btn-cart-hold" title="Guardar orden">
                   <span data-icon="pause-circle"></span>
                   <span>Pausar</span>
-                  <span id="held-orders-badge" class="badge badge-warning" style="display: none; margin-left: 0.3rem; padding: 0.1rem 0.45rem; font-size: 0.72rem; border-radius: var(--radius-full); font-weight: 800;">0</span>
+                  <span id="held-orders-badge" class="badge badge-warning"
+                    style="display: none; margin-left: 0.3rem; padding: 0.1rem 0.45rem; font-size: 0.72rem; border-radius: var(--radius-full); font-weight: 800;">0</span>
                 </button>
                 <button class="btn btn-primary btn-lg" id="btn-open-checkout">
                   <span data-icon="check-circle-2"></span>
@@ -361,7 +383,8 @@
           <div class="card-body" style="padding: 0.85rem 1.25rem;">
             <div class="search-input-wrapper">
               <span data-icon="search"></span>
-              <input type="text" id="customers-search-input" placeholder="Buscar por Nombre, Apellido, Teléfono o Dirección...">
+              <input type="text" id="customers-search-input"
+                placeholder="Buscar por Nombre, Apellido, Teléfono o Dirección...">
             </div>
           </div>
         </div>
@@ -423,6 +446,11 @@
             <select id="inventory-category-filter" style="width: auto; min-width: 180px;">
               <option value="">Todas las Categorías</option>
             </select>
+            <select id="inventory-status-filter" style="width: auto; min-width: 175px;" title="Filtrar por estado">
+              <option value="active">Solo Activos</option>
+              <option value="inactive">Inactivos (Dados de baja)</option>
+              <option value="all">Todos los Estados</option>
+            </select>
             <button class="btn btn-secondary" id="btn-filter-low-stock">
               <span data-icon="alert-triangle"></span>
               <span>Solo Bajo Stock</span>
@@ -481,13 +509,14 @@
 
         <!-- Date Range Filter Bar -->
         <div class="card" style="margin-bottom: 1.5rem;">
-          <div class="card-body" style="padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+          <div class="card-body"
+            style="padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
               <button class="btn btn-secondary btn-sm report-date-preset active" data-preset="today">Hoy</button>
               <button class="btn btn-secondary btn-sm report-date-preset" data-preset="week">Esta Semana</button>
               <button class="btn btn-secondary btn-sm report-date-preset" data-preset="month">Este Mes</button>
             </div>
-            
+
             <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
               <label style="font-size: 0.85rem; font-weight: 600;">Desde:</label>
               <input type="date" id="report-start-date" style="width: auto;">
@@ -630,7 +659,8 @@
             <p>Control de perfiles de Administradores y Cajeros con seguridad de accesos RBAC</p>
           </div>
           <div class="page-actions">
-            <a href="manual-usuarios.html" target="_blank" rel="noopener" class="btn btn-secondary" id="btn-open-user-manual">
+            <a href="manual-usuarios.html" target="_blank" rel="noopener" class="btn btn-secondary"
+              id="btn-open-user-manual">
               <span data-icon="book-open"></span>
               <span>Manual de Usuarios</span>
             </a>
@@ -674,7 +704,7 @@
         </div>
 
         <div class="settings-grid">
-          
+
           <!-- Card: Business Profile Info (Row 1, Left) -->
           <div class="card">
             <div class="card-header">
@@ -746,14 +776,17 @@
                 </div>
                 <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem; margin-top: 1rem;">
                   <input type="checkbox" id="setting-show-logo" style="width: auto;">
-                  <label for="setting-show-logo" style="font-weight: 600; font-size: 0.9rem;">Imprimir Logotipo de A La Leña en Ticket</label>
+                  <label for="setting-show-logo" style="font-weight: 600; font-size: 0.9rem;">Imprimir Logotipo de A La
+                    Leña en Ticket</label>
                 </div>
                 <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
                   <input type="checkbox" id="setting-auto-cut" checked style="width: auto;">
-                  <label for="setting-auto-cut" style="font-weight: 600; font-size: 0.9rem;">Comando de Autocorte al Finalizar</label>
+                  <label for="setting-auto-cut" style="font-weight: 600; font-size: 0.9rem;">Comando de Autocorte al
+                    Finalizar</label>
                 </div>
                 <div style="display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.5rem;">
-                  <button type="button" class="btn btn-secondary" id="btn-test-print-ticket" style="flex: 1 1 140px; justify-content: center;">
+                  <button type="button" class="btn btn-secondary" id="btn-test-print-ticket"
+                    style="flex: 1 1 140px; justify-content: center;">
                     <span data-icon="eye"></span>
                     <span>Probar Ticket</span>
                   </button>
@@ -776,10 +809,12 @@
             </div>
             <div class="card-body">
               <div style="display: flex; flex-direction: column; gap: 1rem;">
-                
+
                 <!-- Download Backups -->
-                <div style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); min-width: 0;">
-                  <h4 style="font-size: 0.95rem; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.4rem;">
+                <div
+                  style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); min-width: 0;">
+                  <h4
+                    style="font-size: 0.95rem; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.4rem;">
                     <span data-icon="download"></span> Descargar Copia de Seguridad
                   </h4>
                   <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">
@@ -794,19 +829,23 @@
                 </div>
 
                 <!-- Upload & Restore Backups -->
-                <div style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); min-width: 0;">
-                  <h4 style="font-size: 0.95rem; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.4rem; color: var(--primary-700);">
+                <div
+                  style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); min-width: 0;">
+                  <h4
+                    style="font-size: 0.95rem; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.4rem; color: var(--primary-700);">
                     <span data-icon="upload-cloud"></span> Cargar y Restaurar Respaldo
                   </h4>
                   <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">
                     Seleccione un archivo de volcado <strong>.SQL</strong> previo para restaurarlo en MySQL.
                   </p>
-                  
+
                   <div style="display: flex; flex-direction: column; gap: 0.6rem;">
                     <!-- Restore SQL Form -->
                     <form id="form-restore-sql" style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
-                      <input type="file" id="input-restore-sql" accept=".sql" required style="font-size: 0.78rem; padding: 0.3rem; flex: 1 1 140px; min-width: 0;">
-                      <button type="submit" class="btn btn-outline btn-sm" style="white-space: nowrap;">Cargar y Restaurar .SQL</button>
+                      <input type="file" id="input-restore-sql" accept=".sql" required
+                        style="font-size: 0.78rem; padding: 0.3rem; flex: 1 1 140px; min-width: 0;">
+                      <button type="submit" class="btn btn-outline btn-sm" style="white-space: nowrap;">Cargar y
+                        Restaurar .SQL</button>
                     </form>
                   </div>
                 </div>
@@ -816,7 +855,8 @@
           </div>
 
           <!-- Card: Factory Reset / Wipe Database (Row 2, Right - Beside POS Printer) -->
-          <div class="card" style="border: 1.5px solid #fca5a5; background: #fffcfc; display: flex; flex-direction: column; justify-content: space-between;">
+          <div class="card"
+            style="border: 1.5px solid #fca5a5; background: #fffcfc; display: flex; flex-direction: column; justify-content: space-between;">
             <div>
               <div class="card-header" style="background: #fef2f2; border-bottom: 1px solid #fee2e2;">
                 <div class="card-title" style="color: #b91c1c;">
@@ -832,18 +872,27 @@
                       Restaurar o Eliminar la Base de Datos e Iniciar desde Cero
                     </h4>
                     <p style="font-size: 0.85rem; color: #7f1d1d; line-height: 1.45; margin-bottom: 0.75rem;">
-                      Elimina todas las ventas, comandas, productos, clientes y registros del inventario. La base de datos se reinicializa y se crea el <strong>Usuario Administrador por defecto</strong> para ingresar a la aplicación.
+                      Elimina todas las ventas, comandas, productos, clientes y registros del inventario. La base de
+                      datos se reinicializa y se crea el <strong>Usuario Administrador por defecto</strong> para
+                      ingresar a la aplicación.
                     </p>
-                    
-                    <div style="background: rgba(254, 242, 242, 0.9); border: 1px dashed #fca5a5; border-radius: var(--radius-md); padding: 0.65rem 0.85rem; margin-bottom: 0.75rem; font-size: 0.83rem;">
-                      <div style="color: #991b1b; font-weight: 700; margin-bottom: 0.3rem;">Credenciales de acceso tras el reinicio:</div>
+
+                    <div
+                      style="background: rgba(254, 242, 242, 0.9); border: 1px dashed #fca5a5; border-radius: var(--radius-md); padding: 0.65rem 0.85rem; margin-bottom: 0.75rem; font-size: 0.83rem;">
+                      <div style="color: #991b1b; font-weight: 700; margin-bottom: 0.3rem;">Credenciales de acceso tras
+                        el reinicio:</div>
                       <div style="display: flex; gap: 1rem; flex-wrap: wrap; color: #1e293b;">
-                        <div>👤 Usuario: <code style="background: #ffffff; padding: 1px 5px; border-radius: 3px; border: 1px solid #fca5a5; font-weight: bold; color: #991b1b;">admin</code></div>
-                        <div>🔑 Contraseña: <code style="background: #ffffff; padding: 1px 5px; border-radius: 3px; border: 1px solid #fca5a5; font-weight: bold; color: #991b1b;">admin123</code></div>
+                        <div>👤 Usuario: <code
+                            style="background: #ffffff; padding: 1px 5px; border-radius: 3px; border: 1px solid #fca5a5; font-weight: bold; color: #991b1b;">admin</code>
+                        </div>
+                        <div>🔑 Contraseña: <code
+                            style="background: #ffffff; padding: 1px 5px; border-radius: 3px; border: 1px solid #fca5a5; font-weight: bold; color: #991b1b;">admin123</code>
+                        </div>
                       </div>
                     </div>
 
-                    <p style="font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.35rem;">
+                    <p
+                      style="font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.35rem;">
                       <span data-icon="alert-triangle" style="color: var(--amber-600);"></span>
                       <span>Descargue un respaldo antes de continuar si desea conservar los datos.</span>
                     </p>
@@ -852,7 +901,8 @@
               </div>
             </div>
             <div style="padding: 0 1.25rem 1.25rem 1.25rem;">
-              <button type="button" class="btn btn-danger" id="btn-open-reset-modal" style="width: 100%; padding: 0.75rem 1rem; font-size: 0.92rem; box-shadow: 0 4px 14px rgba(220, 38, 38, 0.25);">
+              <button type="button" class="btn btn-danger" id="btn-open-reset-modal"
+                style="width: 100%; padding: 0.75rem 1rem; font-size: 0.92rem; box-shadow: 0 4px 14px rgba(220, 38, 38, 0.25);">
                 <span data-icon="rotate-cw"></span>
                 <span>Restablecer / Reiniciar Base de Datos</span>
               </button>
@@ -884,8 +934,10 @@
       </div>
       <div class="modal-body">
         <div style="text-align: center; margin-bottom: 1.25rem;">
-          <span style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Total a Cobrar:</span>
-          <div style="font-size: 2.2rem; font-weight: 800; color: var(--primary-700);" id="checkout-total-display">$0.00</div>
+          <span style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Total
+            a Cobrar:</span>
+          <div style="font-size: 2.2rem; font-weight: 800; color: var(--primary-700);" id="checkout-total-display">$0.00
+          </div>
         </div>
 
         <div class="form-group">
@@ -912,8 +964,9 @@
 
         <div class="form-group" id="cash-payment-fields">
           <label class="form-label">Monto Recibido ($)</label>
-          <input type="number" id="checkout-amount-paid" step="0.5" style="font-size: 1.3rem; font-weight: 700; text-align: center;" placeholder="0.00">
-          
+          <input type="number" id="checkout-amount-paid" step="0.5"
+            style="font-size: 1.3rem; font-weight: 700; text-align: center;" placeholder="0.00">
+
           <!-- Quick Cash Bill Pills -->
           <div style="display: flex; gap: 0.4rem; margin-top: 0.5rem; justify-content: center;">
             <button type="button" class="quick-cash-btn" data-val="exact">Exacto</button>
@@ -923,9 +976,11 @@
           </div>
         </div>
 
-        <div style="background: var(--bg-subtle); padding: 0.85rem 1rem; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: space-between; margin-top: 1rem;">
+        <div
+          style="background: var(--bg-subtle); padding: 0.85rem 1rem; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: space-between; margin-top: 1rem;">
           <span style="font-weight: 700; font-size: 1rem;">Cambio a Entregar:</span>
-          <span style="font-size: 1.4rem; font-weight: 800; color: var(--success-600);" id="checkout-change-display">$0.00</span>
+          <span style="font-size: 1.4rem; font-weight: 800; color: var(--success-600);"
+            id="checkout-change-display">$0.00</span>
         </div>
       </div>
       <div class="modal-footer">
@@ -986,19 +1041,23 @@
       <form id="form-cancel-sale">
         <div class="modal-body" style="padding: 1.25rem;">
           <p style="margin-bottom: 1rem; font-size: 0.92rem; color: var(--text-main);">
-            ¿Confirma que desea cancelar la orden <strong id="cancel-sale-order-label">#ORD</strong>? Esta acción excluirá el ticket de las ventas y reportes activos.
+            ¿Confirma que desea cancelar la orden <strong id="cancel-sale-order-label">#ORD</strong>? Esta acción
+            excluirá el ticket de las ventas y reportes activos.
           </p>
 
           <div class="form-group" style="margin-bottom: 1rem;">
             <label class="form-label" for="cancel-sale-reason">Motivo de cancelación (opcional):</label>
-            <input type="text" id="cancel-sale-reason" placeholder="Ej. Error de cobro, cambio de pedido..." maxlength="200">
+            <input type="text" id="cancel-sale-reason" placeholder="Ej. Error de cobro, cambio de pedido..."
+              maxlength="200">
           </div>
 
-          <div class="form-group" style="display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-subtle);">
+          <div class="form-group"
+            style="display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-subtle);">
             <input type="checkbox" id="cancel-sale-restore-stock" checked style="width: auto; margin-top: 3px;">
             <label for="cancel-sale-restore-stock" style="cursor: pointer; margin: 0;">
               <strong style="display: block; font-size: 0.9rem; color: var(--text-main);">Devolver Platillos</strong>
-              <span style="font-size: 0.78rem; color: var(--text-muted);">Si se marca, las raciones regresan al inventario. Si se desmarca, la orden se cancela sin devolver stock (merma).</span>
+              <span style="font-size: 0.78rem; color: var(--text-muted);">Si se marca, las raciones regresan al
+                inventario. Si se desmarca, la orden se cancela sin devolver stock (merma).</span>
             </label>
           </div>
         </div>
@@ -1026,7 +1085,8 @@
         </button>
       </div>
       <div class="modal-body">
-        <div id="customer-history-summary-box" style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.25rem; display: flex; gap: 1.5rem; flex-wrap: wrap;">
+        <div id="customer-history-summary-box"
+          style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.25rem; display: flex; gap: 1.5rem; flex-wrap: wrap;">
           <!-- Customer summary metrics -->
         </div>
 
@@ -1047,7 +1107,8 @@
               <!-- Dynamic orders rows -->
             </tbody>
           </table>
-          <div id="customer-history-sentinel" class="scroll-sentinel" style="display: none; padding: 0.75rem; justify-content: center; align-items: center; gap: 0.5rem; color: var(--text-muted); font-size: 0.82rem;">
+          <div id="customer-history-sentinel" class="scroll-sentinel"
+            style="display: none; padding: 0.75rem; justify-content: center; align-items: center; gap: 0.5rem; color: var(--text-muted); font-size: 0.82rem;">
             <div class="spinner" style="width: 16px; height: 16px;"></div>
             <span>Cargando más órdenes anteriores...</span>
           </div>
@@ -1090,7 +1151,8 @@
           </div>
           <div class="form-group">
             <label class="form-label" for="cust-address">Dirección de Entrega / Domicilio *</label>
-            <textarea id="cust-address" rows="2" placeholder="Calle, número, cruzamientos y colonia..." required></textarea>
+            <textarea id="cust-address" rows="2" placeholder="Calle, número, cruzamientos y colonia..."
+              required></textarea>
           </div>
           <div class="form-group">
             <label class="form-label" for="cust-notes">Notas / Preferencias del Cliente</label>
@@ -1133,7 +1195,7 @@
               <select id="prod-category" required></select>
             </div>
           </div>
-          
+
           <div class="form-group">
             <label class="form-label" for="prod-name">Nombre del Platillo *</label>
             <input type="text" id="prod-name" placeholder="Ej. Poc Chuc Especial con Frijol Kabax" required>
@@ -1141,14 +1203,18 @@
 
           <div class="form-group">
             <label class="form-label" for="prod-desc">Descripción / Ingredientes</label>
-            <textarea id="prod-desc" rows="2" placeholder="Detalles de preparación a la leña, guarniciones incluidas..."></textarea>
+            <textarea id="prod-desc" rows="2"
+              placeholder="Detalles de preparación a la leña, guarniciones incluidas..."></textarea>
           </div>
 
           <!-- PORTION PRICING SECTION -->
-          <div style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 1rem;">
+          <div
+            style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 1rem;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
-              <span style="font-weight: 700; font-size: 0.9rem; color: var(--primary-700);">Configuración de Precios y Raciones:</span>
-              <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
+              <span style="font-weight: 700; font-size: 0.9rem; color: var(--primary-700);">Configuración de Precios y
+                Raciones:</span>
+              <label
+                style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
                 <input type="checkbox" id="prod-has-half" style="width: auto;">
                 <span>Habilitar Venta por Media Ración</span>
               </label>
@@ -1216,7 +1282,8 @@
         <div class="modal-body">
           <div style="margin-bottom: 1rem;">
             <div style="font-weight: 700; font-size: 1.05rem;" id="adjust-prod-name">Cochinita Pibil</div>
-            <div style="font-size: 0.85rem; color: var(--text-muted);">Stock actual: <strong id="adjust-prod-current-stock">20</strong></div>
+            <div style="font-size: 0.85rem; color: var(--text-muted);">Stock actual: <strong
+                id="adjust-prod-current-stock">20</strong></div>
           </div>
 
           <div class="form-group">
@@ -1238,7 +1305,8 @@
 
           <div class="form-group">
             <label class="form-label" for="adjust-reason">Motivo / Razón del Ajuste</label>
-            <input type="text" id="adjust-reason" placeholder="Ej. Nueva tanda lista del horno de leña, merma por cocina..." required>
+            <input type="text" id="adjust-reason"
+              placeholder="Ej. Nueva tanda lista del horno de leña, merma por cocina..." required>
           </div>
         </div>
         <div class="modal-footer">
@@ -1265,11 +1333,11 @@
       </div>
       <div class="modal-body">
         <div class="dining-account-layout">
-          
+
           <!-- Column 1: Add items to table -->
           <div style="display: flex; flex-direction: column; gap: 0.75rem;">
             <h4 style="font-size: 0.95rem; color: var(--primary-700); font-weight: 700;">Agregar Consumo a la Mesa:</h4>
-            
+
             <div class="form-group">
               <label class="form-label">Comensal o Cliente Asignado:</label>
               <input type="text" id="dining-guest-name" placeholder="Nombre del comensal o familia...">
@@ -1279,7 +1347,8 @@
               <label class="form-label" for="dining-product-search-input">Buscar Platillo por Nombre:</label>
               <div class="search-input-wrapper" style="margin-bottom: 0.4rem;">
                 <span data-icon="search"></span>
-                <input type="text" id="dining-product-search-input" placeholder="Escribe el nombre para filtrar platillos..." autocomplete="off">
+                <input type="text" id="dining-product-search-input"
+                  placeholder="Escribe el nombre para filtrar platillos..." autocomplete="off">
               </div>
               <select id="dining-add-product-select"></select>
             </div>
@@ -1305,7 +1374,8 @@
           </div>
 
           <!-- Column 2: Current Account Items & Total -->
-          <div style="display: flex; flex-direction: column; justify-content: space-between; background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+          <div
+            style="display: flex; flex-direction: column; justify-content: space-between; background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
             <div>
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
                 <h4 style="font-size: 0.95rem; font-weight: 700;">Consumo Acumulado:</h4>
@@ -1319,7 +1389,8 @@
             <div style="margin-top: 1rem; border-top: 1.5px dashed var(--border-color); padding-top: 0.75rem;">
               <div style="display: flex; align-items: center; justify-content: space-between;">
                 <span style="font-weight: 700; font-size: 1.1rem;">TOTAL CUENTA:</span>
-                <span style="font-weight: 800; font-size: 1.5rem; color: var(--primary-700);" id="dining-modal-total-display">$0.00</span>
+                <span style="font-weight: 800; font-size: 1.5rem; color: var(--primary-700);"
+                  id="dining-modal-total-display">$0.00</span>
               </div>
             </div>
           </div>
@@ -1327,7 +1398,8 @@
         </div>
       </div>
       <div class="modal-footer" style="justify-content: space-between;">
-        <button type="button" class="btn btn-secondary btn-sm" id="btn-dining-reset-table" style="color: var(--danger-600);">
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-dining-reset-table"
+          style="color: var(--danger-600);">
           <span data-icon="x-circle"></span>
           <span>Liberar Mesa</span>
         </button>
@@ -1359,17 +1431,21 @@
         </button>
       </div>
       <div class="modal-body">
-        
+
         <!-- Action to Pause current cart if items exist -->
-        <div id="hold-current-cart-section" style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 1.25rem;">
+        <div id="hold-current-cart-section"
+          style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 1.25rem;">
           <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--primary-700);">
             Pausar la Orden Actual del Carrito
           </div>
           <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.75rem;">
-            Guarda temporalmente los platillos seleccionados para atender a otro cliente y reanudar esta venta más tarde.
+            Guarda temporalmente los platillos seleccionados para atender a otro cliente y reanudar esta venta más
+            tarde.
           </p>
           <div style="display: flex; gap: 0.5rem;">
-            <input type="text" id="hold-order-note" placeholder="Nota o referencia opcional (ej. Señor de playera roja, Pedido para llevar...)" style="flex: 1;">
+            <input type="text" id="hold-order-note"
+              placeholder="Nota o referencia opcional (ej. Señor de playera roja, Pedido para llevar...)"
+              style="flex: 1;">
             <button type="button" class="btn btn-amber" id="btn-confirm-hold-cart">
               <span data-icon="pause-circle"></span>
               <span>Guardar en Espera</span>
@@ -1429,7 +1505,8 @@
           <div class="form-group">
             <label class="form-label" for="user-form-password">Contraseña *</label>
             <input type="password" id="user-form-password" placeholder="Mínimo 6 caracteres...">
-            <span class="form-text" id="user-pw-helper">Dejar en blanco para mantener la contraseña actual al editar.</span>
+            <span class="form-text" id="user-pw-helper">Dejar en blanco para mantener la contraseña actual al
+              editar.</span>
           </div>
           <div class="form-row">
             <div class="form-group">
@@ -1472,11 +1549,13 @@
         </button>
       </div>
       <div class="modal-body">
-        
+
         <!-- Form to Add/Edit Category -->
-        <form id="category-form" style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 1.25rem;">
+        <form id="category-form"
+          style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 1.25rem;">
           <input type="hidden" id="cat-form-id">
-          <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.75rem; color: var(--primary-700);" id="cat-form-title">
+          <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.75rem; color: var(--primary-700);"
+            id="cat-form-title">
             Crear Nueva Categoría
           </div>
           <div class="form-row">
@@ -1512,7 +1591,8 @@
             <input type="text" id="cat-desc" placeholder="Breve descripción o detalle...">
           </div>
           <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
-            <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-cat-edit" style="display: none;">Cancelar</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-cat-edit"
+              style="display: none;">Cancelar</button>
             <button type="submit" class="btn btn-primary btn-sm">
               <span data-icon="save"></span>
               <span id="btn-save-cat-text">Guardar Categoría</span>
@@ -1521,7 +1601,17 @@
         </form>
 
         <!-- Current Categories List -->
-        <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem;">Categorías Activas en el Sistema:</h4>
+        <div
+          style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
+          <h4 style="font-size: 0.95rem; font-weight: 700; margin: 0;">Categorías en el Sistema:</h4>
+          <select id="categories-status-filter"
+            style="width: auto; min-width: 175px; padding: 0.35rem 0.65rem; font-size: 0.84rem;"
+            title="Filtrar categorías por estado">
+            <option value="active">Solo Activas</option>
+            <option value="inactive">Inactivas (Dadas de baja)</option>
+            <option value="all">Todas</option>
+          </select>
+        </div>
         <div class="table-responsive" style="max-height: 280px;">
           <table class="table-custom">
             <thead>
@@ -1529,7 +1619,8 @@
                 <th>Icono</th>
                 <th>Nombre</th>
                 <th>Descripción</th>
-                <th>Platillos Asignados</th>
+                <th>Platillos Activos</th>
+                <th>Estado</th>
                 <th style="text-align: right;">Acciones</th>
               </tr>
             </thead>
@@ -1559,11 +1650,13 @@
         </button>
       </div>
       <div class="modal-body">
-        
+
         <!-- Form to Add/Edit Table -->
-        <form id="table-form" style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 1.25rem;">
+        <form id="table-form"
+          style="background: var(--bg-subtle); padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 1.25rem;">
           <input type="hidden" id="tbl-form-id">
-          <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.75rem; color: var(--primary-700);" id="tbl-form-title">
+          <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.75rem; color: var(--primary-700);"
+            id="tbl-form-title">
             Agregar Nueva Mesa al Comedor
           </div>
           <div class="form-row">
@@ -1581,7 +1674,8 @@
             </div>
           </div>
           <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.25rem;">
-            <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-table-edit" style="display: none;">Cancelar</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-table-edit"
+              style="display: none;">Cancelar</button>
             <button type="submit" class="btn btn-primary btn-sm">
               <span data-icon="save"></span>
               <span id="btn-save-table-text">Guardar Mesa</span>
@@ -1629,16 +1723,20 @@
       </div>
       <form id="form-reset-database">
         <div class="modal-body" style="padding: 1.25rem;">
-          <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem; display: flex; gap: 0.75rem; align-items: flex-start;">
+          <div
+            style="background: #fef2f2; border: 1px solid #fecaca; border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem; display: flex; gap: 0.75rem; align-items: flex-start;">
             <div style="color: #dc2626; flex-shrink: 0; margin-top: 2px;">
               <span data-icon="alert-triangle"></span>
             </div>
             <div>
-              <strong style="color: #991b1b; font-size: 0.95rem; display: block; margin-bottom: 0.25rem;">¡Advertencia: Acción Irreversible!</strong>
+              <strong style="color: #991b1b; font-size: 0.95rem; display: block; margin-bottom: 0.25rem;">¡Advertencia:
+                Acción Irreversible!</strong>
               <p style="font-size: 0.84rem; color: #7f1d1d; margin: 0; line-height: 1.4;">
-                Se borrarán todas las ventas, órdenes, clientes, catálogo de productos y movimientos de stock actuales. El sistema reiniciará y se creará el usuario administrador por defecto:
+                Se borrarán todas las ventas, órdenes, clientes, catálogo de productos y movimientos de stock actuales.
+                El sistema reiniciará y se creará el usuario administrador por defecto:
               </p>
-              <div style="background: rgba(255,255,255,0.7); border: 1px dashed #f87171; border-radius: 6px; padding: 0.5rem 0.75rem; margin-top: 0.6rem; font-size: 0.85rem; color: #1e293b;">
+              <div
+                style="background: rgba(255,255,255,0.7); border: 1px dashed #f87171; border-radius: 6px; padding: 0.5rem 0.75rem; margin-top: 0.6rem; font-size: 0.85rem; color: #1e293b;">
                 <div>👤 <strong>Usuario:</strong> <code>admin</code></div>
                 <div>🔑 <strong>Contraseña:</strong> <code>admin123</code></div>
               </div>
@@ -1648,19 +1746,25 @@
           <div class="form-group" style="margin-bottom: 1.25rem;">
             <label class="form-label" style="font-weight: 700;">Seleccione el modo de inicio:</label>
             <div style="display: flex; flex-direction: column; gap: 0.6rem;">
-              <label style="display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.75rem; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); cursor: pointer; background: var(--bg-surface);">
+              <label
+                style="display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.75rem; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); cursor: pointer; background: var(--bg-surface);">
                 <input type="radio" name="reset_mode" value="clean" checked style="margin-top: 3px; width: auto;">
                 <div>
-                  <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-main);">🧹 Limpio Total desde Cero (Recomendado)</div>
-                  <div style="font-size: 0.8rem; color: var(--text-muted);">Base de datos vacía lista para registrar tus propios platillos y clientes. Incluye solo mesas del comedor y usuario Administrador.</div>
+                  <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-main);">🧹 Limpio Total desde Cero
+                    (Recomendado)</div>
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">Base de datos vacía lista para registrar tus
+                    propios platillos y clientes. Incluye solo mesas del comedor y usuario Administrador.</div>
                 </div>
               </label>
 
-              <label style="display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.75rem; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); cursor: pointer; background: var(--bg-surface);">
+              <label
+                style="display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.75rem; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); cursor: pointer; background: var(--bg-surface);">
                 <input type="radio" name="reset_mode" value="demo" style="margin-top: 3px; width: auto;">
                 <div>
-                  <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-main);">🍲 Con Menú y Catálogo Yucateco de Demostración</div>
-                  <div style="font-size: 0.8rem; color: var(--text-muted);">Carga el menú regional preconfigurado de A La Leña (platillos con media ración, bebidas, postres, mesas) y usuarios admin y cajero.</div>
+                  <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-main);">🍲 Con Menú y Catálogo
+                    Yucateco de Demostración</div>
+                  <div style="font-size: 0.8rem; color: var(--text-muted);">Carga el menú regional preconfigurado de A
+                    La Leña (platillos con media ración, bebidas, postres, mesas) y usuarios admin y cajero.</div>
                 </div>
               </label>
             </div>
@@ -1668,16 +1772,20 @@
 
           <div class="form-group" style="margin-bottom: 0.5rem;">
             <label class="form-label" style="font-weight: 700; color: #991b1b;">
-              Para confirmar, escribe la palabra <span style="background: #fee2e2; padding: 2px 6px; border-radius: 4px; letter-spacing: 1px;">REINICIAR</span> abajo:
+              Para confirmar, escribe la palabra <span
+                style="background: #fee2e2; padding: 2px 6px; border-radius: 4px; letter-spacing: 1px;">REINICIAR</span>
+              abajo:
             </label>
-            <input type="text" id="input-confirm-reset" placeholder="Escribe REINICIAR aquí..." autocomplete="off" style="border: 2px solid #f87171; font-weight: 700; text-transform: uppercase;" required>
+            <input type="text" id="input-confirm-reset" placeholder="Escribe REINICIAR aquí..." autocomplete="off"
+              style="border: 2px solid #f87171; font-weight: 700; text-transform: uppercase;" required>
           </div>
         </div>
         <div class="modal-footer" style="background: #fef2f2; border-top: 1px solid #fee2e2;">
           <button type="button" class="btn btn-secondary" data-close-modal="modal-reset-database">
             Cancelar
           </button>
-          <button type="submit" class="btn btn-danger" id="btn-submit-reset-db" disabled style="opacity: 0.5; cursor: not-allowed;">
+          <button type="submit" class="btn btn-danger" id="btn-submit-reset-db" disabled
+            style="opacity: 0.5; cursor: not-allowed;">
             <span data-icon="trash-2"></span>
             <span>Sí, Eliminar y Reiniciar Todo</span>
           </button>
@@ -1690,18 +1798,19 @@
   <div class="toast-container" id="toast-container"></div>
 
   <!-- JAVASCRIPT MODULES -->
-  <script src="js/ui.js?v=5"></script>
-  <script src="js/api.js?v=5"></script>
-  <script src="js/auth.js?v=5"></script>
-  <script src="js/ticketPrinter.js?v=5"></script>
-  <script src="js/pos.js?v=5"></script>
-  <script src="js/dining.js?v=5"></script>
-  <script src="js/customers.js?v=5"></script>
-  <script src="js/inventory.js?v=5"></script>
-  <script src="js/reports.js?v=5"></script>
-  <script src="js/users.js?v=5"></script>
-  <script src="js/settings.js?v=5"></script>
-  <script src="js/app.js?v=5"></script>
+  <script src="js/ui.js?v=6"></script>
+  <script src="js/api.js?v=6"></script>
+  <script src="js/auth.js?v=6"></script>
+  <script src="js/ticketPrinter.js?v=6"></script>
+  <script src="js/pos.js?v=6"></script>
+  <script src="js/dining.js?v=6"></script>
+  <script src="js/customers.js?v=6"></script>
+  <script src="js/inventory.js?v=6"></script>
+  <script src="js/reports.js?v=6"></script>
+  <script src="js/users.js?v=6"></script>
+  <script src="js/settings.js?v=6"></script>
+  <script src="js/app.js?v=6"></script>
 
 </body>
+
 </html>

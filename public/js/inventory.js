@@ -7,9 +7,12 @@ const inventory = {
   isLoading: false,
   searchQuery: '',
   selectedCategory: '',
+  statusFilter: 'active',
   lowStockOnly: false,
   productsList: [],
   categories: [],
+  modalCategories: [],
+  categoryStatusFilter: 'active',
 
   init() {
     if (this.isInitialized) return;
@@ -36,6 +39,22 @@ const inventory = {
       catFilter.addEventListener('change', (e) => {
         this.selectedCategory = e.target.value;
         this.resetAndLoad();
+      });
+    }
+
+    const statusFilterEl = document.getElementById('inventory-status-filter');
+    if (statusFilterEl) {
+      statusFilterEl.addEventListener('change', (e) => {
+        this.statusFilter = e.target.value || 'active';
+        this.resetAndLoad();
+      });
+    }
+
+    const catStatusFilterEl = document.getElementById('categories-status-filter');
+    if (catStatusFilterEl) {
+      catStatusFilterEl.addEventListener('change', (e) => {
+        this.categoryStatusFilter = e.target.value || 'active';
+        this.loadModalCategories();
       });
     }
 
@@ -141,6 +160,13 @@ const inventory = {
         if (filterSelect) {
           filterSelect.innerHTML = '<option value="">Todas las Categorías</option>' + 
             this.categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+          const stillExists = this.categories.some(c => String(c.id) === String(this.selectedCategory));
+          if (this.selectedCategory && stillExists) {
+            filterSelect.value = this.selectedCategory;
+          } else {
+            this.selectedCategory = '';
+            filterSelect.value = '';
+          }
         }
 
         if (formSelect) {
@@ -175,6 +201,7 @@ const inventory = {
         limit: this.limit,
         search: this.searchQuery,
         category_id: this.selectedCategory,
+        status: this.statusFilter,
         low_stock: this.lowStockOnly
       });
 
@@ -198,10 +225,13 @@ const inventory = {
     if (!tbody) return;
 
     if (this.productsList.length === 0) {
+      const emptyMsg = this.statusFilter === 'inactive'
+        ? 'No hay platillos inactivos (dados de baja).'
+        : 'No se encontraron productos en el inventario.';
       tbody.innerHTML = `
         <tr>
           <td colspan="8" style="text-align: center; padding: 3rem; color: var(--text-muted);">
-            No se encontraron productos en el inventario.
+            ${emptyMsg}
           </td>
         </tr>
       `;
@@ -210,6 +240,7 @@ const inventory = {
 
     let html = '';
     productsToAdd.forEach(p => {
+      const isActive = Number(p.active) === 1;
       const stock = parseFloat(p.stock) || 0;
       const minStock = parseFloat(p.min_stock) || 5;
 
@@ -220,15 +251,46 @@ const inventory = {
         stockBadge = `<span class="badge badge-warning">${stock} (Bajo)</span>`;
       }
 
+      const categoryInactiveTag = p.category_name && Number(p.category_active) === 0
+        ? ' <span style="font-size: 0.7rem; color: var(--danger-600); font-weight: 700;">(Cat. inactiva)</span>'
+        : '';
+
+      const statusBadge = isActive
+        ? '<span class="badge badge-success">Activo</span>'
+        : '<span class="badge badge-danger">Inactivo</span>';
+
+      const actionsHtml = isActive
+        ? `
+            <button class="btn btn-secondary btn-sm" onclick="inventory.openStockAdjustModal(${p.id})" title="Ajustar Stock Rápido">
+              <span data-icon="plus-minus"></span>
+              <span>Ajustar</span>
+            </button>
+            <button class="btn btn-secondary btn-sm btn-icon" onclick="inventory.openProductModal(${p.id})" title="Editar">
+              <span data-icon="edit"></span>
+            </button>
+            <button class="btn btn-secondary btn-sm btn-icon" onclick="inventory.deactivateProduct(${p.id})" title="Dar de baja (ocultar del catálogo)" style="color: var(--amber-600);">
+              <span data-icon="archive"></span>
+            </button>
+          `
+        : `
+            <button class="btn btn-success btn-sm" onclick="inventory.restoreProduct(${p.id})" title="Reactivar platillo en el catálogo">
+              <span data-icon="rotate-cw"></span>
+              <span>Reactivar</span>
+            </button>
+            <button class="btn btn-danger btn-sm btn-icon" onclick="inventory.permanentDeleteProduct(${p.id})" title="Eliminar permanentemente de la base de datos">
+              <span data-icon="trash-2"></span>
+            </button>
+          `;
+
       html += `
-        <tr>
+        <tr class="${isActive ? '' : 'row-inactive'}">
           <td><code style="font-weight: 700; color: var(--text-muted);">${p.code || 'S/C'}</code></td>
           <td>
             <div style="font-weight: 700; color: var(--text-main); font-size: 0.95rem;">${p.name}</div>
             ${p.description ? `<div style="font-size: 0.76rem; color: var(--text-muted); max-width: 250px;">${p.description}</div>` : ''}
           </td>
           <td>
-            <span class="badge badge-primary">${p.category_name || 'Sin Categoría'}</span>
+            <span class="badge badge-primary">${p.category_name || 'Sin Categoría'}</span>${categoryInactiveTag}
           </td>
           <td>
             <strong style="color: var(--primary-700); font-size: 0.95rem;">${formatMoney(p.price)}</strong>
@@ -244,20 +306,11 @@ const inventory = {
             ${stockBadge}
           </td>
           <td>
-            <span class="badge badge-success">Activo</span>
+            ${statusBadge}
           </td>
           <td style="text-align: right;">
             <div style="display: inline-flex; gap: 0.35rem;">
-              <button class="btn btn-secondary btn-sm" onclick="inventory.openStockAdjustModal(${p.id})" title="Ajustar Stock Rápido">
-                <span data-icon="plus-minus"></span>
-                <span>Ajustar</span>
-              </button>
-              <button class="btn btn-secondary btn-sm btn-icon" onclick="inventory.openProductModal(${p.id})" title="Editar">
-                <span data-icon="edit"></span>
-              </button>
-              <button class="btn btn-secondary btn-sm btn-icon" onclick="inventory.deleteProduct(${p.id})" title="Eliminar" style="color: var(--danger-600);">
-                <span data-icon="trash-2"></span>
-              </button>
+              ${actionsHtml}
             </div>
           </td>
         </tr>
@@ -380,9 +433,24 @@ const inventory = {
 
   async openCategoriesModal() {
     this.resetCategoryForm();
+    const filterEl = document.getElementById('categories-status-filter');
+    if (filterEl) filterEl.value = this.categoryStatusFilter;
     await this.loadCategories();
-    this.renderCategoriesTable();
+    await this.loadModalCategories();
     openModal('modal-categories');
+  },
+
+  async loadModalCategories() {
+    try {
+      const res = await api.categories.getAll(this.categoryStatusFilter);
+      if (res.success) {
+        this.modalCategories = res.categories;
+        this.renderCategoriesTable();
+      }
+    } catch (err) {
+      console.error('Error al cargar categorías:', err);
+      showToast('Error al consultar categorías', 'error');
+    }
   },
 
   resetCategoryForm() {
@@ -399,11 +467,14 @@ const inventory = {
     const tbody = document.getElementById('categories-table-body');
     if (!tbody) return;
 
-    if (this.categories.length === 0) {
+    if (this.modalCategories.length === 0) {
+      const emptyMsg = this.categoryStatusFilter === 'inactive'
+        ? 'No hay categorías inactivas (dadas de baja).'
+        : 'No hay categorías registradas.';
       tbody.innerHTML = `
         <tr>
-          <td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-muted);">
-            No hay categorías registradas.
+          <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+            ${emptyMsg}
           </td>
         </tr>
       `;
@@ -411,21 +482,41 @@ const inventory = {
     }
 
     let html = '';
-    this.categories.forEach(c => {
+    this.modalCategories.forEach(c => {
+      const isActive = Number(c.active) === 1;
+      const statusBadge = isActive
+        ? '<span class="badge badge-success">Activa</span>'
+        : '<span class="badge badge-danger">Inactiva</span>';
+
+      const actionsHtml = isActive
+        ? `
+            <button class="btn btn-secondary btn-sm btn-icon" onclick="inventory.editCategory(${c.id})" title="Editar">
+              <span data-icon="edit"></span>
+            </button>
+            <button class="btn btn-secondary btn-sm btn-icon" onclick="inventory.deactivateCategory(${c.id})" title="Dar de baja (ocultar)" style="color: var(--amber-600);">
+              <span data-icon="archive"></span>
+            </button>
+          `
+        : `
+            <button class="btn btn-success btn-sm" onclick="inventory.restoreCategory(${c.id})" title="Reactivar categoría">
+              <span data-icon="rotate-cw"></span>
+              <span>Reactivar</span>
+            </button>
+            <button class="btn btn-danger btn-sm btn-icon" onclick="inventory.permanentDeleteCategory(${c.id})" title="Eliminar permanentemente de la base de datos">
+              <span data-icon="trash-2"></span>
+            </button>
+          `;
+
       html += `
-        <tr>
+        <tr class="${isActive ? '' : 'row-inactive'}">
           <td><span data-icon="${c.icon || 'utensils'}"></span></td>
           <td><strong style="color: var(--text-main); font-size: 0.9rem;">${c.name}</strong></td>
           <td style="color: var(--text-muted); font-size: 0.85rem;">${c.description || 'Sin descripción'}</td>
-          <td><span class="badge badge-info">${c.product_count || 0} platillo(s)</span></td>
+          <td><span class="badge badge-info">${Number(c.product_count) || 0} platillo(s)</span></td>
+          <td>${statusBadge}</td>
           <td style="text-align: right;">
             <div style="display: inline-flex; gap: 0.35rem;">
-              <button class="btn btn-secondary btn-sm btn-icon" onclick="inventory.editCategory(${c.id})" title="Editar">
-                <span data-icon="edit"></span>
-              </button>
-              <button class="btn btn-secondary btn-sm btn-icon" onclick="inventory.deleteCategory(${c.id})" title="Eliminar" style="color: var(--danger-600);">
-                <span data-icon="trash-2"></span>
-              </button>
+              ${actionsHtml}
             </div>
           </td>
         </tr>
@@ -437,7 +528,7 @@ const inventory = {
   },
 
   editCategory(id) {
-    const cat = this.categories.find(c => c.id === id);
+    const cat = this.modalCategories.find(c => c.id === id) || this.categories.find(c => c.id === id);
     if (!cat) return;
 
     document.getElementById('cat-form-id').value = cat.id;
@@ -473,45 +564,121 @@ const inventory = {
       }
       this.resetCategoryForm();
       await this.loadCategories();
-      this.renderCategoriesTable();
+      await this.loadModalCategories();
+      this.resetAndLoad();
       if (pos) pos.loadInitialData();
     } catch (err) {
       showToast(err.message || 'Error al guardar categoría', 'error');
     }
   },
 
-  async deleteCategory(id) {
-    const cat = this.categories.find(c => c.id === id);
-    if (cat && cat.product_count > 0) {
-      showToast(`No se puede eliminar porque contiene ${cat.product_count} platillos`, 'warning');
+  async deactivateCategory(id) {
+    const cat = this.modalCategories.find(c => c.id === id) || this.categories.find(c => c.id === id);
+    if (cat && Number(cat.product_count) > 0) {
+      showToast(`No se puede dar de baja porque contiene ${cat.product_count} platillo(s) activo(s)`, 'warning');
       return;
     }
-    if (!confirm('¿Está seguro de eliminar esta categoría?')) return;
+    if (!confirm('¿Desea dar de baja esta categoría?\n\nPodrá reactivarla o eliminarla definitivamente desde el filtro de "Inactivas".')) return;
 
     try {
-      const res = await api.categories.delete(id);
+      const res = await api.categories.delete(id, false);
       if (res.success) {
-        showToast('Categoría eliminada', 'info');
+        showToast(res.message || 'Categoría dada de baja', 'info');
         await this.loadCategories();
-        this.renderCategoriesTable();
-        if (pos) pos.loadInitialData();
-      }
-    } catch (err) {
-      showToast(err.message || 'Error al eliminar categoría', 'error');
-    }
-  },
-
-  async deleteProduct(id) {
-    if (!confirm('¿Desea dar de baja este producto del catálogo?')) return;
-    try {
-      const res = await api.products.delete(id);
-      if (res.success) {
-        showToast('Producto eliminado', 'info');
+        await this.loadModalCategories();
         this.resetAndLoad();
         if (pos) pos.loadInitialData();
       }
     } catch (err) {
-      showToast(err.message || 'Error al eliminar producto', 'error');
+      showToast(err.message || 'Error al dar de baja categoría', 'error');
     }
+  },
+
+  async restoreCategory(id) {
+    try {
+      const res = await api.categories.restore(id);
+      if (res.success) {
+        showToast(res.message || 'Categoría reactivada exitosamente', 'success');
+        await this.loadCategories();
+        await this.loadModalCategories();
+        this.resetAndLoad();
+        if (pos) pos.loadInitialData();
+      }
+    } catch (err) {
+      showToast(err.message || 'Error al reactivar categoría', 'error');
+    }
+  },
+
+  async permanentDeleteCategory(id) {
+    const cat = this.modalCategories.find(c => c.id === id);
+    const catName = cat ? `"${cat.name}"` : 'esta categoría';
+    const msg = `⚠️ ELIMINACIÓN PERMANENTE\n\n¿Está seguro de eliminar definitivamente ${catName} de la base de datos MySQL?\n\nEsta acción es irreversible. Si había platillos inactivos asignados, quedarán "Sin Categoría".`;
+    if (!confirm(msg)) return;
+
+    try {
+      const res = await api.categories.delete(id, true);
+      if (res.success) {
+        showToast(res.message || 'Categoría eliminada permanentemente', 'success');
+        await this.loadCategories();
+        await this.loadModalCategories();
+        this.resetAndLoad();
+        if (pos) pos.loadInitialData();
+      }
+    } catch (err) {
+      showToast(err.message || 'Error al eliminar permanentemente la categoría', 'error');
+    }
+  },
+
+  async deleteCategory(id) {
+    return this.deactivateCategory(id);
+  },
+
+  async deactivateProduct(id) {
+    if (!confirm('¿Desea dar de baja este platillo del catálogo?\n\nSe ocultará de Caja y Comedor pero conservará su historial. Podrá reactivarlo o eliminarlo definitivamente desde el filtro "Inactivos".')) return;
+    try {
+      const res = await api.products.delete(id, false);
+      if (res.success) {
+        showToast(res.message || 'Platillo dado de baja', 'info');
+        this.resetAndLoad();
+        if (pos) pos.loadInitialData();
+      }
+    } catch (err) {
+      showToast(err.message || 'Error al dar de baja platillo', 'error');
+    }
+  },
+
+  async restoreProduct(id) {
+    try {
+      const res = await api.products.restore(id);
+      if (res.success) {
+        showToast(res.message || 'Platillo reactivado', res.categoryInactive ? 'warning' : 'success', res.categoryInactive ? 5500 : 3500);
+        this.resetAndLoad();
+        if (pos) pos.loadInitialData();
+      }
+    } catch (err) {
+      showToast(err.message || 'Error al reactivar platillo', 'error');
+    }
+  },
+
+  async permanentDeleteProduct(id) {
+    const prod = this.productsList.find(item => item.id === id);
+    const prodLabel = prod ? `"${prod.name}" (${prod.code || 'S/C'})` : 'este platillo';
+    const msg = `⚠️ ELIMINACIÓN PERMANENTE\n\n¿Está seguro de eliminar definitivamente ${prodLabel} de la base de datos MySQL?\n\n• Esta acción NO se puede deshacer.\n• Se borrará su historial de movimientos en Kardex (stock_movements).\n• Las ventas pasadas conservarán su nombre e importe en reportes.\n• El código SKU quedará libre para reutilizarse.`;
+    if (!confirm(msg)) return;
+
+    try {
+      const res = await api.products.delete(id, true);
+      if (res.success) {
+        showToast(res.message || 'Platillo eliminado permanentemente', 'success');
+        this.resetAndLoad();
+        if (pos) pos.loadInitialData();
+      }
+    } catch (err) {
+      showToast(err.message || 'Error al eliminar permanentemente el platillo', 'error');
+    }
+  },
+
+  async deleteProduct(id) {
+    return this.deactivateProduct(id);
   }
 };

@@ -146,6 +146,19 @@
   border: 1px solid rgba(134, 28, 28, 0.3);
 }
 
+/* Soft-deleted / Inactive Table Rows */
+tr.row-inactive {
+  background-color: rgba(148, 163, 184, 0.08);
+}
+
+tr.row-inactive td {
+  opacity: 0.78;
+}
+
+tr.row-inactive td:last-child {
+  opacity: 1;
+}
+
 /* KPI Summary Cards */
 .stats-grid {
   display: grid;

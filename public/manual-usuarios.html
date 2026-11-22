@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manual de Usuarios | POS A La Leña - Cocina Tradicional</title>
+  <link rel="icon" type="image/x-icon" href="assets/logo-a-la-leña.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/manual.css">
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <header class="manual-topbar">
+    <div class="topbar-brand">
+      <button type="button" class="btn-menu-mobile" id="btn-mobile-menu" aria-label="Abrir índice">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+      </button>
+      <img src="assets/logo-a-la-leña.jpg" alt="A La Leña" class="topbar-logo">
+      <div class="topbar-title-group">
+        <span class="topbar-title">POS A LA LEÑA</span>
+        <span class="topbar-subtitle">Manual Oficial de Usuarios</span>
+      </div>
+    </div>
+
+    <div class="topbar-controls">
+      <div class="search-box">
+        <span class="search-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </span>
+        <input type="search" id="manual-search" placeholder="Buscar en el manual...">
+      </div>
+
+      <button type="button" class="btn-topbar accent" id="btn-print-manual">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/><rect width="12" height="8" x="6" y="14" rx="1"/></svg>
+        <span class="hide-sm">Imprimir / PDF</span>
+      </button>
+
+      <a href="/" class="btn-topbar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+        <span class="hide-sm">Volver al POS</span>
+      </a>
+    </div>
+  </header>
+
+  <div class="manual-layout">
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="manual-sidebar" id="manual-sidebar">
+      <div class="sidebar-role-filter">
+        <span class="sidebar-label">Filtrar guía por perfil</span>
+        <div class="role-pills">
+          <button type="button" class="role-pill active" data-role="all">Todos</button>
+          <button type="button" class="role-pill" data-role="cashier">Cajero</button>
+          <button type="button" class="role-pill" data-role="admin">Admin</button>
+        </div>
+      </div>
+
+      <div class="nav-group">
+        <span class="sidebar-label">Primeros Pasos</span>
+        <a href="#sec-inicio" class="nav-link active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" x2="12" y1="2" y2="12"/></svg>
+          <span>Inicio y Acceso</span>
+          <span class="nav-role-dot all" title="Todos"></span>
+        </a>
+        <a href="#sec-roles" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>Roles y Seguridad</span>
+          <span class="nav-role-dot all"></span>
+        </a>
+      </div>
+
+      <div class="nav-group">
+        <span class="sidebar-label">Operación Diaria</span>
+        <a href="#sec-pos" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span>Caja (POS)</span>
+          <span class="nav-role-dot all"></span>
+        </a>
+        <a href="#sec-comedor" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2v6a3 3 0 0 1-3 3 3 3 0 0 1-3-3V2"/><path d="M15 2v19"/><path d="M5 2v4a3 3 0 0 0 3 3 3 3 0 0 0 3-3V2"/><path d="M8 2v19"/></svg>
+          <span>Comedor y Mesas</span>
+          <span class="nav-role-dot all"></span>
+        </a>
+        <a href="#sec-tickets" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-8"/><path d="M16 12h-8"/><path d="M14 16h-6"/></svg>
+          <span>Tickets e Impresión</span>
+          <span class="nav-role-dot all"></span>
+        </a>
+        <a href="#sec-clientes" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>Directorio de Clientes</span>
+          <span class="nav-role-dot all"></span>
+        </a>
+      </div>
+
+      <div class="nav-group">
+        <span class="sidebar-label">Administración</span>
+        <a href="#sec-inventario" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+          <span>Inventario y Menú</span>
+          <span class="nav-role-dot admin" title="Solo Administrador"></span>
+        </a>
+        <a href="#sec-reportes" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+          <span>Reportes y Cancelaciones</span>
+          <span class="nav-role-dot admin"></span>
+        </a>
+        <a href="#sec-usuarios" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="15" r="3"/><circle cx="9" cy="7" r="4"/><path d="M10 15H6a4 4 0 0 0-4 4v2"/></svg>
+          <span>Gestión de Usuarios</span>
+          <span class="nav-role-dot admin"></span>
+        </a>
+        <a href="#sec-configuracion" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.6.85 1 1.51 1H21a2 2 0 0 1 0 4h-.09c-.66 0-1.25.4-1.51 1z"/></svg>
+          <span>Configuración y Respaldos</span>
+          <span class="nav-role-dot admin"></span>
+        </a>
+        <a href="#sec-faq" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
+          <span>Preguntas Frecuentes</span>
+          <span class="nav-role-dot all"></span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="manual-content">
+
+      <!-- Search / Filter Status Bar -->
+      <div class="search-status" id="search-status">
+        <span id="search-status-text"></span>
+        <button type="button" id="btn-clear-search">Restablecer filtros</button>
+      </div>
+
+      <!-- HERO -->
+      <section class="manual-hero">
+        <span class="hero-eyebrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          Guía Operativa Completa
+        </span>
+        <h1>Manual de Usuarios — POS A La Leña</h1>
+        <p>Guía paso a paso para Administradores y Cajeros del sistema de Punto de Venta, Comedor, Inventario, Reportes e Impresión Térmica de A La Leña — Cocina Tradicional Yucateca.</p>
+        <div class="hero-meta">
+          <span class="hero-chip">Perfiles: Administrador y Cajero</span>
+          <span class="hero-chip">Impresión 80mm / 58mm y PDF</span>
+          <span class="hero-chip">Modo App en Windows (Edge)</span>
+        </div>
+      </section>
+
+      <!-- 1. INICIO Y ACCESO -->
+      <section class="doc-section" id="sec-inicio" data-roles="all,cashier,admin">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <div class="section-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" x2="12" y1="2" y2="12"/></svg>
+            </div>
+            <div>
+              <h2>1. Inicio del Sistema y Acceso</h2>
+              <p class="section-subtitle">Cómo encender, usar como aplicación de Windows y cerrar el POS correctamente</p>
+            </div>
+          </div>
+          <div class="role-badges">
+            <span class="badge badge-cashier">Cajero</span>
+            <span class="badge badge-admin">Administrador</span>
+          </div>
+        </div>
+
+        <p class="doc-lead">El sistema incluye lanzadores automatizados para Windows que encienden MySQL (solo si estaba detenido), ejecutan el servidor en segundo plano y abren el POS en ventana limpia de Microsoft Edge.</p>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h4>Modo Silencioso (Recomendado)</h4>
+            <p>Haz doble clic en <code>POS - A La Leña.vbs</code>. Corre sin ventana negra y abre el POS maximizado con el ícono de A La Leña.</p>
+          </div>
+          <div class="feature-card">
+            <h4>Modo Consola (Soporte)</h4>
+            <p>Usa <code>POS - A La Leña.bat</code> si necesitas ver los registros en tiempo real del servidor en pantalla.</p>
+          </div>
+          <div class="feature-card">
+            <h4>Detener al Fin de Turno</h4>
+            <p>Ejecuta <code>Detener POS - A La Leña.bat</code> para apagar el servidor Node.js sin afectar otros programas ni apagar MySQL.</p>
+          </div>
+        </div>
+
+        <ol class="steps-list">
+          <li><div>Al abrir la aplicación, ingresa tu <strong>Usuario</strong> y <strong>Contraseña</strong> asignados y presiona <strong>Iniciar Sesión</strong>.</div></li>
+          <li><div>Si es la primera instalación, las credenciales iniciales son <code>admin / admin123</code> (Administrador) y <code>cajero / cajero123</code> (Cajero).</div></li>
+          <li><div>Para cambiar de turno o retirarte de la caja, haz clic en el botón de <strong>Cerrar Sesión</strong> en la esquina superior derecha.</div></li>
+        </ol>
+
+        <div class="callout callout-info">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="16" y2="12"/><line x1="12" x2="12.01" y1="8" y2="8"/></svg>
+          <div>
+            <strong>Protección automática de sesión</strong>
+            Por seguridad, tu sesión se cierra automáticamente al cerrar la ventana de la aplicación o tras <strong>30 minutos de inactividad</strong>. Las mesas abiertas en Comedor y las órdenes pausadas en Caja permanecen intactas.
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. ROLES Y SEGURIDAD -->
+      <section class="doc-section" id="sec-roles" data-roles="all,cashier,admin">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <div class="section-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div>
+              <h2>2. Perfiles y Matriz de Permisos (RBAC)</h2>
+              <p class="section-subtitle">Diferencias claras entre las acciones permitidas a Cajeros y Administradores</p>
+            </div>
+          </div>
+          <div class="role-badges">
+            <span class="badge badge-cashier">Cajero</span>
+            <span class="badge badge-admin">Administrador</span>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="manual-table">
+            <thead>
+              <tr>
+                <th>Módulo / Acción</th>
+                <th>Cajero</th>
+                <th>Administrador</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Caja (POS):</strong> cobrar mostrador/para llevar, pausar órdenes, imprimir tickets</td><td class="check-yes">Sí</td><td class="check-yes">Sí</td></tr>
+              <tr><td><strong>Comedor:</strong> abrir mesas, agregar/quitar platillos, pre-cuenta, cobrar en caja</td><td class="check-yes">Sí</td><td class="check-yes">Sí</td></tr>
+              <tr><td><strong>Comedor:</strong> liberar / cancelar mesa con consumos pendientes</td><td class="check-no">No</td><td class="check-yes">Sí</td></tr>
+              <tr><td><strong>Clientes:</strong> registrar, editar y consultar historial de compras</td><td class="check-yes">Sí</td><td class="check-yes">Sí</td></tr>
+              <tr><td><strong>Inventario:</strong> crear/editar platillos, categorías, precios y ajustes de stock</td><td class="check-no">No</td><td class="check-yes">Sí</td></tr>
+              <tr><td><strong>Reportes:</strong> KPIs financieros, reportes por ticket/platillo, exportar CSV</td><td class="check-no">No</td><td class="check-yes">Sí</td></tr>
+              <tr><td><strong>Cancelación de órdenes cobradas</strong> (con opción Devolver Platillos)</td><td class="check-no">No</td><td class="check-yes">Sí</td></tr>
+              <tr><td><strong>Usuarios y Configuración:</strong> cuentas, impresora, backups `.SQL` y reinicio</td><td class="check-no">No</td><td class="check-yes">Sí</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 3. CAJA (POS) -->
+      <section class="doc-section" id="sec-pos" data-roles="all,cashier,admin">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <div class="section-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            </div>
+            <div>
+              <h2>3. Módulo de Caja (Punto de Venta)</h2>
+              <p class="section-subtitle">Ventas en mostrador y para llevar con porciones duales y cobro rápido</p>
+            </div>
+          </div>
+          <div class="role-badges">
+            <span class="badge badge-cashier">Cajero</span>
+            <span class="badge badge-admin">Administrador</span>
+          </div>
+        </div>
+
+        <ol class="steps-list">
+          <li><div><strong>Buscar o filtrar platillos:</strong> escribe el nombre o código en el buscador o selecciona una pestaña de categoría (<em>Platillos Fuertes, Antojitos, Bebidas, Postres</em>).</div></li>
+          <li><div><strong>Seleccionar porción:</strong> haz clic en <strong>Completa</strong> (descuenta <code>1.0</code> del stock) o <strong>Media Ración</strong> (descuenta <code>0.5</code> del stock) si el platillo admite media porción.</div></li>
+          <li><div><strong>Asociar cliente y notas (opcional):</strong> busca un cliente existente o regístralo rápido con el botón ámbar <strong>+</strong>, y escribe instrucciones de preparación en el recuadro de comentarios.</div></li>
+          <li><div><strong>Pausar orden (opcional):</strong> si el cliente aún decide o llega otro cliente, presiona <strong>Pausar</strong> para guardar temporalmente el carrito y retomarlo después desde el indicador amarillo <em>"en espera"</em>.</div></li>
+          <li><div><strong>Cobrar:</strong> aplica un descuento si corresponde, presiona <strong>Cobrar</strong>, elige método de pago (<em>Efectivo</em> con calculadora de cambio, <em>Tarjeta</em>, <em>Transferencia</em> o <em>Mixto</em>) y confirma la venta.</div></li>
+        </ol>
+
+        <!-- Mockup POS -->
+        <div class="screen-mockup">
+          <div class="mockup-bar">
+            <div class="mockup-bar-left">
+              <div class="mockup-dots"><span></span><span></span><span></span></div>
+              <span>A LA LEÑA — Vista de Caja (POS)</span>
+            </div>
+            <div class="mockup-nav-pills">
+              <span class="active">Caja</span><span>Comedor</span><span>Clientes</span><span>Inventario</span><span>Reportes</span>
+            </div>
+          </div>
+          <div class="mockup-body">
+            <div class="mock-pos">
+              <div class="mock-card">
+                <div style="display:flex;gap:0.4rem;margin-bottom:0.45rem;">
+                  <span class="badge badge-admin">Todos</span>
+                  <span class="badge badge-amber">A La Leña</span>
+                  <span class="badge badge-info">Bebidas</span>
+                </div>
+                <div class="mock-products">
+                  <div class="mock-prod-item">
+                    <strong>Cochinita Pibil Tradicional</strong>
+                    <span style="color:var(--success-600);font-size:0.68rem;font-weight:700;">Stock: 18 raciones</span>
+                    <div class="mock-portion-row">
+                      <span class="mock-btn mock-btn-primary">Entera $150</span>
+                      <span class="mock-btn mock-btn-amber">1/2 $90</span>
+                    </div>
+                  </div>
+                  <div class="mock-prod-item">
+                    <strong>Poc Chuc Especial</strong>
+                    <span style="color:var(--success-600);font-size:0.68rem;font-weight:700;">Stock: 12 raciones</span>
+                    <div class="mock-portion-row">
+                      <span class="mock-btn mock-btn-primary">Entera $165</span>
+                      <span class="mock-btn mock-btn-amber">1/2 $100</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="mock-cart-header">
+                  <span>Orden de Venta</span>
+                  <span style="background:var(--amber-400);color:#1c1917;padding:0.08rem 0.45rem;border-radius:999px;font-size:0.65rem;">1 en espera</span>
+                </div>
+                <div class="mock-cart-body">
+                  <div class="mock-line"><span>1x Cochinita Pibil (Entera)</span><strong>$150.00</strong></div>
+                  <div class="mock-line"><span>1x Poc Chuc (1/2)</span><strong>$100.00</strong></div>
+                  <div class="mock-line total"><span>TOTAL:</span><span>$250.00</span></div>
+                  <div style="display:flex;gap:0.4rem;margin-top:0.55rem;">
+                    <span class="mock-btn mock-btn-secondary" style="flex:1;">Pausar</span>
+                    <span class="mock-btn mock-btn-primary" style="flex:1.4;">Cobrar</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mockup-caption">Recreación de Caja (POS): catálogo con porciones duales a la izquierda y carrito con cobro rápido a la derecha.</div>
+        </div>
+      </section>
+
+      <!-- 4. COMEDOR Y MESAS -->
+      <section class="doc-section" id="sec-comedor" data-roles="all,cashier,admin">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <div class="section-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2v6a3 3 0 0 1-3 3 3 3 0 0 1-3-3V2"/><path d="M15 2v19"/><path d="M5 2v4a3 3 0 0 0 3 3 3 3 0 0 0 3-3V2"/><path d="M8 2v19"/></svg>
+            </div>
+            <div>
+              <h2>4. Módulo de Comedor y Mesas</h2>
+              <p class="section-subtitle">Control visual de mesas en piso, comandas continuas, pre-cuentas y cobro</p>
+            </div>
+          </div>
+          <div class="role-badges">
+            <span class="badge badge-cashier">Cajero</span>
+            <span class="badge badge-admin">Administrador</span>
+          </div>
+        </div>
+
+        <ol class="steps-list">
+          <li><div><strong>Abrir una mesa:</strong> haz clic en cualquier tarjeta de mesa. Al agregar el primer platillo la mesa pasa automáticamente de <strong>Libre</strong> (verde) a <strong>Ocupada</strong> (ámbar).</div></li>
+          <li><div><strong>Agregar o retirar platillos:</strong> filtra el platillo por nombre, elige ración completa o media, ajusta la cantidad y pulsa <strong>Agregar a la Cuenta</strong>. Puedes retirar un platillo específico con el ícono de papelera.</div></li>
+          <li><div><strong>Emitir Pre-cuenta:</strong> cuando los comensales pidan la cuenta, presiona <strong>Pre-cuenta</strong>. La mesa cambiará a estado <strong>Pre-corte Entregado</strong> (vino) y podrás imprimir o descargar el estado de cuenta.</div></li>
+          <li><div><strong>Cobrar en Caja:</strong> haz clic en <strong>Cobrar en Caja</strong> para transferir automáticamente todos los platillos al carrito de Caja. Al finalizar el cobro, la mesa se libera automáticamente y se descuenta el inventario.</div></li>
+          <li><div><strong>Liberar Mesa sin cobrar (Solo Administrador):</strong> si una mesa se abrió por error o se retiraron sin consumir, un <strong>Administrador</strong> puede presionar <strong>Liberar Mesa</strong> para limpiar la cuenta y devolverla a estado <em>Libre</em>.</div></li>
+        </ol>
+
+        <div class="screen-mockup">
+          <div class="mockup-bar">
+            <div class="mockup-bar-left">
+              <div class="mockup-dots"><span></span><span></span><span></span></div>
+              <span>Comedor y Cuentas de Mesas</span>
+            </div>
+            <div class="mockup-nav-pills">
+              <span>Caja</span><span class="active">Comedor</span><span>Clientes</span>
+            </div>
+          </div>
+          <div class="mockup-body">
+            <div class="mock-tables-grid">
+              <div class="mock-table-card free">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.35rem;">
+                  <strong>Mesa 1 (Ventanal)</strong>
+                  <span class="badge badge-cashier">Libre</span>
+                </div>
+                <div style="color:var(--text-muted);font-size:0.7rem;">Mesa Disponible</div>
+                <div style="display:flex;justify-content:space-between;margin-top:0.5rem;font-weight:700;"><span>0 platillos</span><span>$0.00</span></div>
+              </div>
+              <div class="mock-table-card occupied">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.35rem;">
+                  <strong>Mesa 2 (Salón)</strong>
+                  <span class="badge badge-amber">Ocupada</span>
+                </div>
+                <div style="color:var(--text-muted);font-size:0.7rem;">Familia Pech</div>
+                <div style="display:flex;justify-content:space-between;margin-top:0.5rem;font-weight:700;"><span>3 platillos</span><span style="color:var(--primary-700);">$340.00</span></div>
+              </div>
+              <div class="mock-table-card billed">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.35rem;">
+                  <strong>Mesa 3 (Terraza)</strong>
+                  <span class="badge badge-admin">Pre-corte</span>
+                </div>
+                <div style="color:var(--text-muted);font-size:0.7rem;">Don Manuel</div>
+                <div style="display:flex;justify-content:space-between;margin-top:0.5rem;font-weight:700;"><span>2 platillos</span><span style="color:var(--primary-700);">$250.00</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="mockup-caption">Estados visuales de mesa: Verde (Libre), Ámbar (Ocupada / Consumiendo) y Borgoña (Pre-corte entregado).</div>
+        </div>
+      </section>
+
+      <!-- 5. TICKETS E IMPRESIÓN -->
+      <section class="doc-section" id="sec-tickets" data-roles="all,cashier,admin">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <div class="section-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-8"/><path d="M16 12h-8"/><path d="M14 16h-6"/></svg>
+            </div>
+            <div>
+              <h2>5. Tickets Térmicos e Impresión Digital (.PDF)</h2>
+              <p class="section-subtitle">Emisión en impresora POS de 80mm / 58mm y descarga digital para compartir</p>
+            </div>
+          </div>
+          <div class="role-badges">
+            <span class="badge badge-cashier">Cajero</span>
+            <span class="badge badge-admin">Administrador</span>
+          </div>
+        </div>
+
+        <p class="doc-lead">Al finalizar cada venta o solicitar una pre-cuenta, se abre la ventana de vista previa del ticket con dos opciones listas para usar:</p>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h4>Imprimir Ticket Físico (POS)</h4>
+            <p>Envía el ticket directo a tu impresora térmica (80mm o 58mm) en una sola hoja continua, sin encabezados del navegador ni hojas en blanco, respetando el tamaño de fuente y el logotipo configurado.</p>
+          </div>
+          <div class="feature-card">
+            <h4>Descargar Ticket Digital (.PDF)</h4>
+            <p>Genera un archivo <code>Ticket_ORD-...pdf</code> con el logotipo, ajuste automático de líneas dentro de márgenes y altura dinámica adaptada al número de platillos (ideal para enviar por WhatsApp).</p>
+          </div>
+        </div>
+
+        <div class="screen-mockup">
+          <div class="mockup-bar">
+            <div class="mockup-bar-left">
+              <div class="mockup-dots"><span></span><span></span><span></span></div>
+              <span>Ticket de Venta #ORD-20261121-0001</span>
+            </div>
+            <span>Vista Previa</span>
+          </div>
+          <div class="mockup-body">
+            <div class="mock-ticket-paper">
+              <img src="assets/logo-a-la-leña.jpg" alt="Logo" style="width:36px;height:36px;border-radius:6px;margin-bottom:4px;">
+              <div><strong>A LA LEÑA - COCINA TRADICIONAL</strong></div>
+              <div style="font-size:0.62rem;color:#555;">RFC: ALN230915ABC · Tel: 999-923-4567</div>
+              <hr style="border:none;border-top:1px dashed #333;margin:6px 0;">
+              <div><strong>ORDEN: #ORD-20261121-0001</strong></div>
+              <hr style="border:none;border-top:1px dashed #333;margin:6px 0;">
+              <div class="left-row"><span>1x Cochinita Pibil</span><span>$150.00</span></div>
+              <div class="left-row"><span>1x Poc Chuc (1/2)</span><span>$100.00</span></div>
+              <hr style="border:none;border-top:1px dashed #333;margin:6px 0;">
+              <div class="left-row"><strong>TOTAL A PAGAR:</strong><strong>$250.00</strong></div>
+              <div style="margin-top:6px;font-size:0.64rem;">¡Gracias por su visita a A La Leña! Buen provecho.</div>
+            </div>
+            <div style="display:flex;justify-content:center;gap:0.5rem;margin-top:0.8rem;flex-wrap:wrap;">
+              <span class="mock-btn mock-btn-secondary">Cerrar</span>
+              <span class="mock-btn mock-btn-amber">Descargar Ticket Digital (.PDF)</span>
+              <span class="mock-btn mock-btn-primary">Imprimir Ticket Físico (POS)</span>
+            </div>
+          </div>
+          <div class="mockup-caption">Ventana de ticket: incluye logotipo (si está activo en Configuración) y exportación física o digital.</div>
+        </div>
+      </section>
+
+      <!-- 6. CLIENTES -->
+      <section class="doc-section" id="sec-clientes" data-roles="all,cashier,admin">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <div class="section-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div>
+              <h2>6. Directorio de Clientes</h2>
+              <p class="section-subtitle">Registro de clientes frecuentes, datos de entrega e historial de tickets</p>
+            </div>
+          </div>
+          <div class="role-badges">
+            <span class="badge badge-cashier">Cajero</span>
+            <span class="badge badge-admin">Administrador</span>
+          </div>
+        </div>
+
+        <ol class="steps-list">
+          <li><div><strong>Registrar cliente:</strong> haz clic en <strong>Nuevo Cliente</strong> e ingresa nombre, apellido, teléfono y dirección de entrega (también puedes darlo de alta sin salir de Caja).</div></li>
+          <li><div><strong>Buscar clientes:</strong> filtra al instante por nombre, apellido, teléfono o dirección en la barra superior.</div></li>
+          <li><div><strong>Consultar historial y reimprimir tickets:</strong> pulsa el botón <strong>Historial</strong> en cualquier cliente para ver su total de órdenes, monto acumulado y abrir/reimprimir cualquier ticket anterior.</div></li>
+        </ol>
+      </section>
+
+      <!-- 7. INVENTARIO -->
+      <section class="doc-section" id="sec-inventario" data-roles="admin">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <div class="section-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+            </div>
+            <div>
+              <h2>7. Inventario y Catálogo de Platillos</h2>
+              <p class="section-subtitle">Gestión de menú, precios por ración/media ración, alertas de bajo stock y Kardex</p>
+            </div>
+          </div>
+          <div class="role-badges">
+            <span class="badge badge-admin">Solo Administrador</span>
+          </div>
+        </div>
+
+        <ol class="steps-list">
+          <li><div><strong>Categorías:</strong> usa el botón <strong>Categorías</strong> para crear, editar u ordenar las pestañas que aparecen en Caja.</div></li>
+          <li><div><strong>Crear o editar platillos:</strong> haz clic en <strong>Nuevo Platillo / Producto</strong>, asigna código, nombre, categoría, precio de ración completa y activa <em>¿Tiene media ración?</em> para indicar su precio reducido.</div></li>
+          <li><div><strong>Ajustar existencias y revisar stock bajo:</strong> filtra con <strong>Solo Bajo Stock</strong> para identificar platillos por agotarse y usa el ajuste de stock (indicando motivo) para registrar entradas o mermas en el Kardex auditable.</div></li>
+        </ol>
+      </section>
+
+      <!-- 8. REPORTES Y CANCELACIÓN DE ÓRDENES -->
+      <section class="doc-section" id="sec-reportes" data-roles="admin">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <div class="section-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+            </div>
+            <div>
+              <h2>8. Reportes de Ventas y Cancelación de Órdenes</h2>
+              <p class="section-subtitle">Indicadores financieros, exportación CSV y anulación controlada de tickets cobrados</p>
+            </div>
+          </div>
+          <div class="role-badges">
+            <span class="badge badge-admin">Solo Administrador</span>
+          </div>
+        </div>
+
+        <ol class="steps-list">
+          <li><div><strong>Filtrar período:</strong> usa los atajos <em>Hoy</em>, <em>Esta Semana</em>, <em>Este Mes</em> o selecciona un rango personalizado de fechas y pulsa <strong>Filtrar</strong>.</div></li>
+          <li><div><strong>Consultar y exportar:</strong> alterna entre <strong>Reporte 1: Ventas por Ticket</strong> y <strong>Reporte 2: Detallado por Platillo</strong> (con número de orden vinculado) y descárgalos en formato <code>.CSV</code> para Excel.</div></li>
+          <li><div><strong>Cancelar una orden cobrada:</strong> en la tabla <em>Reporte de Ventas por Ticket</em>, haz clic en el botón rojo <strong>Cancelar</strong> junto al folio deseado.</div></li>
+          <li><div><strong>Elegir si se devuelven platillos al inventario:</strong> escribe un motivo opcional y decide si mantener marcada la casilla <strong>Devolver Platillos</strong>:
+            <br>• <em>Marcada:</em> las raciones (<code>1.0</code> completa / <code>0.5</code> media) regresan automáticamente al stock con registro en Kardex.
+            <br>• <em>Desmarcada:</em> la venta se anula de los ingresos y reportes, pero el stock no se devuelve (merma).</div></li>
+        </ol>
+
+        <div class="screen-mockup">
+          <div class="mockup-bar">
+            <div class="mockup-bar-left">
+              <div class="mockup-dots"><span></span><span></span><span></span></div>
+              <span>Reportes de Ventas y Modal de Cancelación</span>
+            </div>
+            <div class="mockup-nav-pills">
+              <span>Inventario</span><span class="active">Reportes</span><span>Usuarios</span>
+            </div>
+          </div>
+          <div class="mockup-body">
+            <div class="mock-kpi-grid">
+              <div class="mock-kpi"><span>Ventas Totales</span><strong>$1,134.00</strong></div>
+              <div class="mock-kpi"><span>Órdenes</span><strong>6</strong></div>
+              <div class="mock-kpi"><span>Ticket Promedio</span><strong>$189.00</strong></div>
+              <div class="mock-kpi"><span>Descuentos</span><strong>$0.00</strong></div>
+            </div>
+
+            <div class="mock-card" style="margin-bottom:0.85rem;font-size:0.74rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
+                <div><strong style="color:var(--primary-700);">#ORD-20261121-0001</strong> · Mostrador · Público General · <strong>$250.00</strong></div>
+                <div style="display:flex;gap:0.35rem;">
+                  <span class="mock-btn mock-btn-secondary">Ticket</span>
+                  <span class="mock-btn mock-btn-danger">Cancelar</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mock-modal-preview">
+              <div class="mock-modal-head">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+                <span>Cancelar Orden</span>
+              </div>
+              <div class="mock-modal-body">
+                <p>¿Confirma cancelar la orden <strong>#ORD-20261121-0001</strong>? Se excluirá de las ventas activas.</p>
+                <div style="margin-top:0.5rem;padding:0.4rem 0.6rem;border:1px solid var(--border-color);border-radius:6px;color:var(--text-muted);">Motivo: Error de cobro en caja</div>
+                <div class="mock-checkbox-box">
+                  <span style="color:var(--primary-700);font-weight:800;">☑</span>
+                  <div>
+                    <strong style="display:block;">Devolver Platillos</strong>
+                    <span style="font-size:0.68rem;color:var(--text-muted);">Reintegra las raciones al inventario (desmarcar si es merma).</span>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:flex-end;gap:0.4rem;margin-top:0.65rem;">
+                  <span class="mock-btn mock-btn-secondary">Volver</span>
+                  <span class="mock-btn mock-btn-danger-solid">Confirmar Cancelación</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mockup-caption">Recreación de Reportes: fila con botón Cancelar y ventana de confirmación con la opción "Devolver Platillos".</div>
+        </div>
+      </section>
+
+      <!-- 9. USUARIOS -->
+      <section class="doc-section" id="sec-usuarios" data-roles="admin">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <div class="section-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="15" r="3"/><circle cx="9" cy="7" r="4"/><path d="M10 15H6a4 4 0 0 0-4 4v2"/></svg>
+            </div>
+            <div>
+              <h2>9. Gestión de Usuarios y Accesos</h2>
+              <p class="section-subtitle">Creación de cuentas de Cajeros y Administradores, contraseñas y control de estado</p>
+            </div>
+          </div>
+          <div class="role-badges">
+            <span class="badge badge-admin">Solo Administrador</span>
+          </div>
+        </div>
+
+        <ol class="steps-list">
+          <li><div><strong>Crear cuenta:</strong> haz clic en <strong>Nuevo Usuario</strong>, captura el nombre completo, nombre de usuario único, contraseña y selecciona el rol (<em>Administrador</em> o <em>Cajero</em>).</div></li>
+          <li><div><strong>Editar o desactivar accesos:</strong> usa el botón de edición para cambiar contraseñas o pasar una cuenta a estado <em>Inactivo</em> si un empleado deja de laborar (sin borrar su historial de ventas).</div></li>
+          <li><div><strong>Consultar este manual:</strong> en cualquier momento puedes reabrir esta guía desde el botón <strong>Manual de Usuarios</strong> ubicado a la izquierda de <em>Nuevo Usuario</em>.</div></li>
+        </ol>
+
+        <div class="callout callout-warning">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+          <div>
+            <strong>Recomendación de seguridad</strong>
+            Cambia las contraseñas iniciales (<code>admin123</code> y <code>cajero123</code>) desde este módulo y asigna una cuenta personal a cada cajero para tener trazabilidad exacta en reportes y tickets.
+          </div>
+        </div>
+      </section>
+
+      <!-- 10. CONFIGURACIÓN Y RESPALDOS -->
+      <section class="doc-section" id="sec-configuracion" data-roles="admin">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <div class="section-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.6.85 1 1.51 1H21a2 2 0 0 1 0 4h-.09c-.66 0-1.25.4-1.51 1z"/></svg>
+            </div>
+            <div>
+              <h2>10. Configuración, Impresora y Respaldos</h2>
+              <p class="section-subtitle">Personalización del negocio, formato térmico, copias SQL y mantenimiento</p>
+            </div>
+          </div>
+          <div class="role-badges">
+            <span class="badge badge-admin">Solo Administrador</span>
+          </div>
+        </div>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h4>Datos del Negocio</h4>
+            <p>Edita nombre comercial, eslogan, RFC, teléfono, dirección y mensaje al pie que aparecen en todos los tickets físicos y digitales.</p>
+          </div>
+          <div class="feature-card">
+            <h4>Impresora POS</h4>
+            <p>Configura papel (<code>80mm</code> o <code>58mm</code>), tamaño de fuente (<em>Pequeña, Mediana, Grande</em>), impresión de logotipo y usa <strong>Probar Ticket</strong> para verificar el resultado.</p>
+          </div>
+          <div class="feature-card">
+            <h4>Respaldos y Restauración</h4>
+            <p>Descarga periódicamente una copia de seguridad <code>.SQL</code> completa (ventas, menú, clientes y stock) y restáurala en un clic cuando lo necesites.</p>
+          </div>
+          <div class="feature-card">
+            <h4>Reinicio de Fábrica</h4>
+            <p>Zona protegida con confirmación <code>REINICIAR</code> para empezar desde cero o cargar el catálogo de demostración yucateco.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 11. PREGUNTAS FRECUENTES -->
+      <section class="doc-section" id="sec-faq" data-roles="all,cashier,admin">
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <div class="section-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
+            </div>
+            <div>
+              <h2>11. Preguntas Frecuentes y Solución Rápida</h2>
+              <p class="section-subtitle">Respuestas directas a las dudas más comunes en el turno diario</p>
+            </div>
+          </div>
+          <div class="role-badges">
+            <span class="badge badge-cashier">Cajero</span>
+            <span class="badge badge-admin">Administrador</span>
+          </div>
+        </div>
+
+        <div class="faq-list">
+          <div class="faq-item open">
+            <button type="button" class="faq-question">
+              <span>¿Se pierden las mesas abiertas si se cierra mi sesión por inactividad o cierro la ventana?</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="faq-answer">No. Todas las mesas abiertas y sus platillos están guardados en MySQL. Al volver a iniciar sesión (incluso con otro usuario o cajero de siguiente turno), todas las cuentas de Comedor y las órdenes pausadas siguen intactas.</div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-question">
+              <span>¿Por qué como cajero no puedo liberar una mesa ni cancelar una venta cobrada?</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="faq-answer">Por control interno y auditoría (RBAC), tanto <strong>Liberar Mesa</strong> como <strong>Cancelar Orden</strong> están restringidos al perfil de <strong>Administrador</strong>. Solicita apoyo al encargado para realizar la cancelación con su cuenta.</div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-question">
+              <span>¿Qué debo verificar si la impresora térmica imprime encabezados del navegador?</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="faq-answer">Asegúrate de seleccionar el tamaño de papel de tu impresora térmica (58mm u 80mm), escala en <em>Tamaño real (100%)</em>, márgenes en <em>Ninguno / Mínimo</em> y desactivar <em>Encabezados y pies de página</em> en el diálogo de impresión de Edge.</div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-question">
+              <span>¿Qué hago si al abrir POS - A La Leña.vbs me pide permiso de Administrador en Windows?</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="faq-answer">Significa que el servicio oficial de MySQL estaba apagado y el lanzador solicita autorización para encenderlo automáticamente. Haz clic en <strong>Sí</strong> y la aplicación abrirá en unos segundos; si MySQL ya está encendido, no volverá a pedir permiso.</div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="manual-footer">
+        POS — A La Leña · Cocina Tradicional Yucateca · Manual Operativo para Administradores y Cajeros
+      </footer>
+    </main>
+  </div>
+
+  <button type="button" class="btn-back-top" id="btn-back-top" title="Volver arriba" aria-label="Volver arriba">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </button>
+
+  <script src="js/manual.js"></script>
+</body>
+</html>

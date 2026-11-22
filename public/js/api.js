@@ -5,7 +5,7 @@ const API_BASE = '/api';
 const api = {
   // Base Request Method
   async request(endpoint, options = {}) {
-    const token = localStorage.getItem('pos_token');
+    const token = sessionStorage.getItem('pos_token');
     const headers = {
       'Accept': 'application/json',
       ...options.headers
@@ -37,8 +37,9 @@ const api = {
       if (!response.ok) {
         if (response.status === 401) {
           // Token expired or invalid
-          localStorage.removeItem('pos_token');
-          localStorage.removeItem('pos_user');
+          sessionStorage.removeItem('pos_token');
+          sessionStorage.removeItem('pos_user');
+          sessionStorage.removeItem('pos_last_activity');
           if (typeof auth !== 'undefined' && auth.onLogout) {
             auth.onLogout();
           }
@@ -110,7 +111,7 @@ const api = {
 
   // Helper for downloading files with Authorization headers
   downloadFile: async (endpoint, defaultFilename) => {
-    const token = localStorage.getItem('pos_token');
+    const token = sessionStorage.getItem('pos_token');
     const url = endpoint.startsWith('http') ? endpoint : `${API_BASE}${endpoint}`;
     const res = await fetch(url, {
       headers: token ? { 'Authorization': `Bearer ${token}` } : {}
@@ -139,11 +140,11 @@ const api = {
     getReport1: (startDate, endDate) => api.request(`/sales/report/general?startDate=${startDate}&endDate=${endDate}`),
     getReport2: (startDate, endDate) => api.request(`/sales/report/detailed-products?startDate=${startDate}&endDate=${endDate}`),
     getCsvGeneralUrl: (startDate, endDate) => {
-      const token = localStorage.getItem('pos_token') || '';
+      const token = sessionStorage.getItem('pos_token') || '';
       return `${API_BASE}/sales/report/csv/general?startDate=${startDate}&endDate=${endDate}&token=${token}`;
     },
     getCsvDetailedUrl: (startDate, endDate) => {
-      const token = localStorage.getItem('pos_token') || '';
+      const token = sessionStorage.getItem('pos_token') || '';
       return `${API_BASE}/sales/report/csv/detailed-products?startDate=${startDate}&endDate=${endDate}&token=${token}`;
     }
   },
@@ -161,11 +162,11 @@ const api = {
     get: () => api.request('/settings'),
     update: (data) => api.request('/settings', { method: 'PUT', delay: 0, body: data }),
     getSqlBackupUrl: () => {
-      const token = localStorage.getItem('pos_token') || '';
+      const token = sessionStorage.getItem('pos_token') || '';
       return `${API_BASE}/settings/backup/sql?token=${token}`;
     },
     getDbBackupUrl: () => {
-      const token = localStorage.getItem('pos_token') || '';
+      const token = sessionStorage.getItem('pos_token') || '';
       return `${API_BASE}/settings/backup/db?token=${token}`;
     },
     restoreSql: (formData) => api.request('/settings/restore/sql', { method: 'POST', body: formData }),

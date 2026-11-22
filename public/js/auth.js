@@ -2,8 +2,18 @@
 
 const auth = {
   currentUser: null,
+  INACTIVITY_LIMIT_MS: 30 * 60 * 1000, // 30 minutes
+  inactivityInterval: null,
+  lastActivityAt: 0,
+  activityListenersBound: false,
+  _boundActivityHandler: null,
+  _boundVisibilityHandler: null,
 
   init() {
+    // Clean up any legacy persistent session from localStorage
+    localStorage.removeItem('pos_token');
+    localStorage.removeItem('pos_user');
+
     this.setupLoginForm();
     this.checkSession();
   },
@@ -29,8 +39,9 @@ const auth = {
       try {
         const res = await api.auth.login(username, password);
         if (res.success) {
-          localStorage.setItem('pos_token', res.token);
-          localStorage.setItem('pos_user', JSON.stringify(res.user));
+          sessionStorage.setItem('pos_token', res.token);
+          sessionStorage.setItem('pos_user', JSON.stringify(res.user));
+          this.recordActivity(true);
           this.currentUser = res.user;
           showToast(`¡Bienvenido al sistema, ${res.user.name}!`, 'success');
           this.renderAuthenticatedApp();
@@ -52,10 +63,18 @@ const auth = {
   },
 
   async checkSession() {
-    const token = localStorage.getItem('pos_token');
-    const storedUser = localStorage.getItem('pos_user');
+    const token = sessionStorage.getItem('pos_token');
+    const storedUser = sessionStorage.getItem('pos_user');
 
     if (!token || !storedUser) {
+      this.showLogin();
+      return;
+    }
+
+    // Check if session exceeded 30 minutes of inactivity before reload
+    const storedLastActivity = parseInt(sessionStorage.getItem('pos_last_activity') || '0', 10);
+    if (storedLastActivity > 0 && (Date.now() - storedLastActivity) >= this.INACTIVITY_LIMIT_MS) {
+      this.clearSessionStorage();
       this.showLogin();
       return;
     }
@@ -65,18 +84,91 @@ const auth = {
       const res = await api.auth.me();
       if (res.success && res.user) {
         this.currentUser = res.user;
-        localStorage.setItem('pos_user', JSON.stringify(res.user));
+        sessionStorage.setItem('pos_user', JSON.stringify(res.user));
+        this.recordActivity(true);
         this.renderAuthenticatedApp();
       } else {
+        this.clearSessionStorage();
         this.showLogin();
       }
     } catch (err) {
       console.warn('Sesión expirada o inválida:', err);
+      this.clearSessionStorage();
       this.showLogin();
     }
   },
 
+  clearSessionStorage() {
+    sessionStorage.removeItem('pos_token');
+    sessionStorage.removeItem('pos_user');
+    sessionStorage.removeItem('pos_last_activity');
+    localStorage.removeItem('pos_token');
+    localStorage.removeItem('pos_user');
+  },
+
+  recordActivity(force = false) {
+    const now = Date.now();
+    if (!force && (now - this.lastActivityAt) < 1000) return;
+    this.lastActivityAt = now;
+    if (sessionStorage.getItem('pos_token')) {
+      sessionStorage.setItem('pos_last_activity', String(now));
+    }
+  },
+
+  startInactivityMonitor() {
+    this.stopInactivityMonitor();
+    this.recordActivity(true);
+
+    if (!this.activityListenersBound) {
+      this._boundActivityHandler = () => {
+        if (this.currentUser) {
+          this.recordActivity(false);
+        }
+      };
+      this._boundVisibilityHandler = () => {
+        if (document.visibilityState === 'visible' && this.currentUser) {
+          this.checkInactivity();
+        }
+      };
+
+      const activityEvents = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'click', 'scroll'];
+      activityEvents.forEach(ev => {
+        window.addEventListener(ev, this._boundActivityHandler, { passive: true });
+      });
+      document.addEventListener('visibilitychange', this._boundVisibilityHandler);
+      this.activityListenersBound = true;
+    }
+
+    this.inactivityInterval = setInterval(() => {
+      this.checkInactivity();
+    }, 30 * 1000);
+  },
+
+  stopInactivityMonitor() {
+    if (this.inactivityInterval) {
+      clearInterval(this.inactivityInterval);
+      this.inactivityInterval = null;
+    }
+  },
+
+  checkInactivity() {
+    if (!this.currentUser) return;
+    const storedLast = parseInt(sessionStorage.getItem('pos_last_activity') || '0', 10);
+    const lastActive = Math.max(this.lastActivityAt || 0, storedLast || 0);
+    if (lastActive > 0 && (Date.now() - lastActive) >= this.INACTIVITY_LIMIT_MS) {
+      this.logout('Sesión cerrada automáticamente por 30 minutos de inactividad', 'warning');
+    }
+  },
+
+  closeOpenModals() {
+    document.querySelectorAll('.modal-overlay.open').forEach(modal => {
+      modal.classList.remove('open');
+    });
+  },
+
   showLogin() {
+    this.stopInactivityMonitor();
+    this.closeOpenModals();
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('app').style.display = 'none';
     renderIcons();
@@ -108,6 +200,7 @@ const auth = {
     });
 
     renderIcons();
+    this.startInactivityMonitor();
 
     // Trigger App modules refresh
     if (typeof app !== 'undefined' && app.onAuthenticated) {
@@ -115,15 +208,20 @@ const auth = {
     }
   },
 
-  logout() {
-    localStorage.removeItem('pos_token');
-    localStorage.removeItem('pos_user');
+  logout(message = 'Sesión cerrada correctamente', toastType = 'info') {
+    this.stopInactivityMonitor();
+    this.clearSessionStorage();
     this.currentUser = null;
-    showToast('Sesión cerrada correctamente', 'info');
+    this.lastActivityAt = 0;
+    showToast(message, toastType);
     this.showLogin();
   },
 
   onLogout() {
+    this.stopInactivityMonitor();
+    this.clearSessionStorage();
+    this.currentUser = null;
+    this.lastActivityAt = 0;
     this.showLogin();
   },
 

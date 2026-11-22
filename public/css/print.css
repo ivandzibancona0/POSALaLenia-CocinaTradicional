@@ -176,25 +176,45 @@
 
 /* Print Media Queries */
 @media print {
-  body * {
-    visibility: hidden;
+  @page {
+    margin: 0;
+  }
+
+  html,
+  body {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    overflow: visible !important;
+  }
+
+  body > *:not(#modal-ticket-preview) {
+    display: none !important;
   }
 
   #modal-ticket-preview,
   #modal-ticket-preview .modal-box,
   #modal-ticket-preview .modal-body,
-  #modal-ticket-preview .ticket-preview-container {
+  #modal-ticket-preview .ticket-preview-container,
+  #printable-ticket-area {
+    display: block !important;
     position: static !important;
     transform: none !important;
+    backdrop-filter: none !important;
     overflow: visible !important;
+    height: auto !important;
     max-height: none !important;
     max-width: none !important;
-    width: auto !important;
+    width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
     box-shadow: none !important;
     border: none !important;
+    opacity: 1 !important;
   }
 
   #modal-ticket-preview .modal-header,
@@ -202,26 +222,11 @@
     display: none !important;
   }
 
-  #printable-ticket-area,
-  #printable-ticket-area * {
-    visibility: visible;
-  }
-  
-  #printable-ticket-area {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    background: transparent;
-  }
-
   .pos-ticket {
-    border: none;
-    box-shadow: none;
-    margin: 0;
-    padding: 0;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 2mm !important;
     width: 100% !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;

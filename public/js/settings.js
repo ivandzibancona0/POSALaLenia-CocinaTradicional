@@ -175,6 +175,10 @@ const settings = {
     document.getElementById('setting-address').value = s.address || '';
     document.getElementById('setting-ticket-footer').value = s.ticket_footer || '';
 
+    document.getElementById('setting-show-slogan').checked = s.show_slogan === undefined ? true : s.show_slogan == 1;
+    document.getElementById('setting-show-rfc').checked = s.show_rfc === undefined ? true : s.show_rfc == 1;
+    document.getElementById('setting-show-ticket-footer').checked = s.show_ticket_footer === undefined ? true : s.show_ticket_footer == 1;
+
     // Printer
     document.getElementById('setting-paper-width').value = s.paper_width || '80mm';
     document.getElementById('setting-font-size').value = s.font_size || 'medium';
@@ -190,7 +194,10 @@ const settings = {
       rfc: document.getElementById('setting-rfc').value.trim(),
       phone: document.getElementById('setting-phone').value.trim(),
       address: document.getElementById('setting-address').value.trim(),
-      ticket_footer: document.getElementById('setting-ticket-footer').value.trim()
+      ticket_footer: document.getElementById('setting-ticket-footer').value.trim(),
+      show_slogan: document.getElementById('setting-show-slogan').checked ? 1 : 0,
+      show_rfc: document.getElementById('setting-show-rfc').checked ? 1 : 0,
+      show_ticket_footer: document.getElementById('setting-show-ticket-footer').checked ? 1 : 0
     };
 
     try {

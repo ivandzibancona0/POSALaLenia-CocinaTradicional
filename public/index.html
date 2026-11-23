@@ -24,7 +24,7 @@
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/pos.css">
   <link rel="stylesheet" href="css/dining.css">
-  <link rel="stylesheet" href="css/print.css">
+  <link rel="stylesheet" href="css/print.css?v=7">
 </head>
 
 <body>
@@ -720,12 +720,18 @@
                   <input type="text" id="setting-business-name" required>
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Eslogan / Subtítulo</label>
+                  <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+                    <input type="checkbox" id="setting-show-slogan" checked style="width: auto;" title="Mostrar en nota de venta">
+                    <label class="form-label" for="setting-show-slogan" style="margin-bottom: 0; cursor: pointer;">Eslogan / Subtítulo</label>
+                  </div>
                   <input type="text" id="setting-slogan">
                 </div>
                 <div class="form-row">
                   <div class="form-group">
-                    <label class="form-label">RFC</label>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+                      <input type="checkbox" id="setting-show-rfc" checked style="width: auto;" title="Mostrar en nota de venta">
+                      <label class="form-label" for="setting-show-rfc" style="margin-bottom: 0; cursor: pointer;">RFC</label>
+                    </div>
                     <input type="text" id="setting-rfc">
                   </div>
                   <div class="form-group">
@@ -738,7 +744,10 @@
                   <textarea id="setting-address" rows="2"></textarea>
                 </div>
                 <div class="form-group">
-                  <label class="form-label">Mensaje al Pie del Ticket</label>
+                  <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+                    <input type="checkbox" id="setting-show-ticket-footer" checked style="width: auto;" title="Mostrar en nota de venta">
+                    <label class="form-label" for="setting-show-ticket-footer" style="margin-bottom: 0; cursor: pointer;">Mensaje al Pie del Ticket</label>
+                  </div>
                   <input type="text" id="setting-ticket-footer">
                 </div>
                 <button type="submit" class="btn btn-primary" style="width: 100%;">
@@ -1801,14 +1810,14 @@
   <script src="js/ui.js?v=6"></script>
   <script src="js/api.js?v=6"></script>
   <script src="js/auth.js?v=6"></script>
-  <script src="js/ticketPrinter.js?v=6"></script>
+  <script src="js/ticketPrinter.js?v=9"></script>
   <script src="js/pos.js?v=6"></script>
   <script src="js/dining.js?v=6"></script>
   <script src="js/customers.js?v=6"></script>
   <script src="js/inventory.js?v=6"></script>
   <script src="js/reports.js?v=6"></script>
   <script src="js/users.js?v=6"></script>
-  <script src="js/settings.js?v=6"></script>
+  <script src="js/settings.js?v=9"></script>
   <script src="js/app.js?v=6"></script>
 
 </body>

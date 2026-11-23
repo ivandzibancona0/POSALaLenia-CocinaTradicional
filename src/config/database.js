@@ -115,6 +115,9 @@ async function initDatabase() {
       font_size VARCHAR(20) DEFAULT 'medium',
       auto_cut TINYINT(1) DEFAULT 1,
       show_logo TINYINT(1) DEFAULT 1,
+      show_slogan TINYINT(1) DEFAULT 1,
+      show_rfc TINYINT(1) DEFAULT 1,
+      show_ticket_footer TINYINT(1) DEFAULT 1,
       currency_symbol VARCHAR(10) DEFAULT '$',
       tax_percentage DECIMAL(5, 2) DEFAULT 0,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -247,6 +250,23 @@ async function initDatabase() {
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
   `);
+
+  // Ensure ticket visibility columns exist on existing databases
+  const settingsCols = await db.all(
+    `SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'settings'`,
+    [DB_NAME]
+  );
+  const colNames = new Set(settingsCols.map(r => r.COLUMN_NAME));
+  const visibilityMigrations = [
+    { name: 'show_slogan', sql: 'ALTER TABLE settings ADD COLUMN show_slogan TINYINT(1) DEFAULT 1 AFTER show_logo' },
+    { name: 'show_rfc', sql: 'ALTER TABLE settings ADD COLUMN show_rfc TINYINT(1) DEFAULT 1 AFTER show_slogan' },
+    { name: 'show_ticket_footer', sql: 'ALTER TABLE settings ADD COLUMN show_ticket_footer TINYINT(1) DEFAULT 1 AFTER show_rfc' }
+  ];
+  for (const col of visibilityMigrations) {
+    if (!colNames.has(col.name)) {
+      await db.run(col.sql);
+    }
+  }
 
   // Ensure default settings exist
   const existingSettings = await db.get('SELECT id FROM settings WHERE id = 1');

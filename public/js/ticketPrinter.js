@@ -5,6 +5,20 @@ const ticketPrinter = {
   cachedLogo: null,
   pendingCancelSale: null,
 
+  // Translate payment method codes to Spanish uppercase labels
+  formatPaymentMethod(method) {
+    const map = {
+      cash: 'EFECTIVO',
+      card: 'TARJETA',
+      credit: 'CRÉDITO',
+      debit: 'DÉBITO',
+      transfer: 'TRANSFERENCIA',
+      mixed: 'MIXTO'
+    };
+    const key = String(method || 'cash').trim().toLowerCase();
+    return map[key] || String(method || 'EFECTIVO').trim().toUpperCase();
+  },
+
   // Render HTML Ticket for Preview and Printing
   renderTicketHtml(data) {
     this.currentTicketData = data;
@@ -17,7 +31,6 @@ const ticketPrinter = {
     const isPreCheck = data.ticket_type === 'pre_check';
     const orderNum = sale.order_number || data.order_number || 'S/N';
     const dateFormatted = formatDate(sale.created_at || data.printed_at || new Date());
-    const cashierName = sale.cashier_name || data.waiter || 'Cajero';
 
     // Customer details
     const custName = sale.customer_first_name 
@@ -39,7 +52,7 @@ const ticketPrinter = {
           <td style="width: 55%;">
             <strong>${it.product_name || it.name}</strong>
             ${portionText ? `<div class="ticket-item-subtext">${portionText}</div>` : ''}
-            ${it.notes ? `<div class="ticket-item-subtext"><em>Nota: ${it.notes}</em></div>` : ''}
+            ${it.notes ? `<div class="ticket-item-subtext">Nota: ${it.notes}</div>` : ''}
           </td>
           <td style="width: 30%; text-align: right;">${formatMoney(subtotal)}</td>
         </tr>
@@ -49,18 +62,20 @@ const ticketPrinter = {
     const subtotal = parseFloat(sale.subtotal || data.total) || 0;
     const discount = parseFloat(sale.discount) || 0;
     const total = parseFloat(sale.total || data.total) || 0;
-    const amountPaid = parseFloat(sale.amount_paid) || total;
-    const changeDue = parseFloat(sale.change_due) || 0;
-    const payMethod = (sale.payment_method || 'Efectivo').toUpperCase();
+    const payMethod = this.formatPaymentMethod(sale.payment_method);
+
+    const showSlogan = settings.show_slogan === undefined ? true : (settings.show_slogan == 1 || settings.show_slogan === true);
+    const showRfc = settings.show_rfc === undefined ? true : (settings.show_rfc == 1 || settings.show_rfc === true);
+    const showTicketFooter = settings.show_ticket_footer === undefined ? true : (settings.show_ticket_footer == 1 || settings.show_ticket_footer === true);
 
     const html = `
       <div class="pos-ticket paper-${paperWidth} font-${fontSize}">
         <div class="ticket-header">
           ${settings.show_logo ? `<img src="assets/logo-a-la-leña.jpg" class="ticket-logo" alt="Logo">` : ''}
           <div class="ticket-business-name">${settings.business_name || 'A LA LEÑA'}</div>
-          <div class="ticket-slogan">${settings.slogan || 'Cocina Tradicional Yucateca'}</div>
+          ${showSlogan ? `<div class="ticket-slogan">${settings.slogan || 'Cocina Tradicional Yucateca'}</div>` : ''}
           <div class="ticket-business-info">
-            <div>RFC: ${settings.rfc || 'XEXX010101000'}</div>
+            ${showRfc ? `<div>RFC: ${settings.rfc || 'XEXX010101000'}</div>` : ''}
             <div>Tel: ${settings.phone || '999-123-4567'}</div>
             <div>${settings.address || 'Mérida, Yucatán'}</div>
           </div>
@@ -74,12 +89,6 @@ const ticketPrinter = {
 
         <div class="ticket-meta-row">
           <span>Fecha: ${dateFormatted}</span>
-          <span>Atendió: ${cashierName}</span>
-        </div>
-
-        <div class="ticket-meta-row">
-          <span>Tipo: ${sale.sale_type === 'dining' ? 'Comedor' : 'Mostrador / Para Llevar'}</span>
-          <span>Estado: ${isPreCheck ? 'Por Cobrar' : 'Pagado'}</span>
         </div>
 
         <!-- Customer Information -->
@@ -128,14 +137,6 @@ const ticketPrinter = {
               <td>Método de Pago:</td>
               <td style="text-align: right;">${payMethod}</td>
             </tr>
-            <tr>
-              <td>Monto Recibido:</td>
-              <td style="text-align: right;">${formatMoney(amountPaid)}</td>
-            </tr>
-            <tr>
-              <td>Cambio:</td>
-              <td style="text-align: right;">${formatMoney(changeDue)}</td>
-            </tr>
           ` : ''}
         </table>
 
@@ -146,12 +147,13 @@ const ticketPrinter = {
           </div>
         ` : ''}
 
-        <div class="ticket-double-divider"></div>
+        ${showTicketFooter ? `
+          <div class="ticket-double-divider"></div>
 
-        <div class="ticket-footer">
-          <div>${settings.ticket_footer || '¡Gracias por su compra! Vuelva pronto.'}</div>
-          <div style="margin-top: 4px; font-size: 10px; color: #555;">*** Comprobante de Venta sin validez fiscal ***</div>
-        </div>
+          <div class="ticket-footer">
+            <div>${settings.ticket_footer || '¡Gracias por su compra! Vuelva pronto.'}</div>
+          </div>
+        ` : ''}
       </div>
     `;
 
@@ -343,6 +345,9 @@ const ticketPrinter = {
       return currentY + (lines.length * stepY);
     };
 
+    doc.setTextColor(0, 0, 0);
+    doc.setDrawColor(0, 0, 0);
+
     let y = 9;
     const showLogo = settings.show_logo == 1 || settings.show_logo === true;
     if (showLogo && logoData && logoData.dataUrl && logoData.width && logoData.height) {
@@ -353,7 +358,7 @@ const ticketPrinter = {
       y += logoHeight + 3;
     }
 
-    doc.setFont('courier', 'bold');
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(layout.title);
     y = drawWrapped(
       settings.business_name || 'A LA LEÑA',
@@ -364,26 +369,34 @@ const ticketPrinter = {
       { align: 'center' }
     );
 
-    y += 1;
-    doc.setFont('courier', 'normal');
-    doc.setFontSize(layout.body);
-    y = drawWrapped(
-      settings.slogan || 'Cocina Tradicional Yucateca',
-      layout.centerX,
-      y,
-      layout.contentWidth,
-      layout.lineHeight,
-      { align: 'center' }
-    );
+    const showSlogan = settings.show_slogan === undefined ? true : (settings.show_slogan == 1 || settings.show_slogan === true);
+    const showRfc = settings.show_rfc === undefined ? true : (settings.show_rfc == 1 || settings.show_rfc === true);
+    const showTicketFooter = settings.show_ticket_footer === undefined ? true : (settings.show_ticket_footer == 1 || settings.show_ticket_footer === true);
 
-    y = drawWrapped(
-      `RFC: ${settings.rfc || 'XEXX010101000'}`,
-      layout.centerX,
-      y,
-      layout.contentWidth,
-      layout.lineHeight,
-      { align: 'center' }
-    );
+    y += 1;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(layout.body);
+    if (showSlogan) {
+      y = drawWrapped(
+        settings.slogan || 'Cocina Tradicional Yucateca',
+        layout.centerX,
+        y,
+        layout.contentWidth,
+        layout.lineHeight,
+        { align: 'center' }
+      );
+    }
+
+    if (showRfc) {
+      y = drawWrapped(
+        `RFC: ${settings.rfc || 'XEXX010101000'}`,
+        layout.centerX,
+        y,
+        layout.contentWidth,
+        layout.lineHeight,
+        { align: 'center' }
+      );
+    }
     y = drawWrapped(
       `Tel: ${settings.phone || '999-123-4567'}`,
       layout.centerX,
@@ -397,7 +410,7 @@ const ticketPrinter = {
     doc.line(layout.marginX, y, layout.rightX, y);
 
     y += 4.5;
-    doc.setFont('courier', 'bold');
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(layout.subtitle);
     const headerTitle = isPreCheck
       ? `PRE-CORTE: ${data.table_name || 'Mesa'}`
@@ -405,17 +418,10 @@ const ticketPrinter = {
     y = drawWrapped(headerTitle, layout.centerX, y, layout.contentWidth, layout.subtitleLineHeight, { align: 'center' });
 
     y += 1;
-    doc.setFont('courier', 'normal');
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(layout.body);
     y = drawWrapped(
       `Fecha: ${formatDate(sale.created_at || data.printed_at || new Date())}`,
-      layout.marginX,
-      y,
-      layout.contentWidth,
-      layout.lineHeight
-    );
-    y = drawWrapped(
-      `Atendio: ${sale.cashier_name || data.waiter || 'Cajero'}`,
       layout.marginX,
       y,
       layout.contentWidth,
@@ -441,14 +447,14 @@ const ticketPrinter = {
     doc.line(layout.marginX, y, layout.rightX, y);
 
     y += 4.5;
-    doc.setFont('courier', 'bold');
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(layout.body);
     doc.text('CANT  PRODUCTO', layout.marginX, y);
     doc.text('TOTAL', layout.rightX, y, { align: 'right' });
     doc.line(layout.marginX, y + 1.2, layout.rightX, y + 1.2);
 
     y += layout.lineHeight + 1.5;
-    doc.setFont('courier', 'normal');
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(layout.body);
     items.forEach(it => {
       const name = it.product_name || it.name || '';
@@ -471,7 +477,7 @@ const ticketPrinter = {
     y += 4.5;
     const discount = parseFloat(sale.discount) || 0;
     if (discount > 0) {
-      doc.setFont('courier', 'normal');
+      doc.setFont('helvetica', 'bold');
       doc.setFontSize(layout.body);
       y = drawWrapped(
         `Subtotal: ${formatMoney(sale.subtotal || data.total)}`,
@@ -491,7 +497,7 @@ const ticketPrinter = {
       );
     }
 
-    doc.setFont('courier', 'bold');
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(layout.subtitle);
     y = drawWrapped(
       `TOTAL: ${formatMoney(sale.total ?? data.total ?? 0)}`,
@@ -504,24 +510,10 @@ const ticketPrinter = {
 
     if (!isPreCheck) {
       y += 1;
-      doc.setFont('courier', 'normal');
+      doc.setFont('helvetica', 'bold');
       doc.setFontSize(layout.body);
       y = drawWrapped(
-        `Metodo: ${(sale.payment_method || 'Efectivo').toUpperCase()}`,
-        layout.marginX,
-        y,
-        layout.contentWidth,
-        layout.lineHeight
-      );
-      y = drawWrapped(
-        `Recibido: ${formatMoney(sale.amount_paid ?? sale.total ?? data.total ?? 0)}`,
-        layout.marginX,
-        y,
-        layout.contentWidth,
-        layout.lineHeight
-      );
-      y = drawWrapped(
-        `Cambio: ${formatMoney(sale.change_due || 0)}`,
+        `Método de Pago: ${this.formatPaymentMethod(sale.payment_method)}`,
         layout.marginX,
         y,
         layout.contentWidth,
@@ -529,19 +521,21 @@ const ticketPrinter = {
       );
     }
 
-    y += 3;
-    doc.line(layout.marginX, y, layout.rightX, y);
-    y += 4.5;
-    doc.setFont('courier', 'normal');
-    doc.setFontSize(layout.body);
-    y = drawWrapped(
-      settings.ticket_footer || 'Gracias por su preferencia!',
-      layout.centerX,
-      y,
-      layout.contentWidth,
-      layout.lineHeight,
-      { align: 'center' }
-    );
+    if (showTicketFooter) {
+      y += 3;
+      doc.line(layout.marginX, y, layout.rightX, y);
+      y += 4.5;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(layout.body);
+      y = drawWrapped(
+        settings.ticket_footer || 'Gracias por su preferencia!',
+        layout.centerX,
+        y,
+        layout.contentWidth,
+        layout.lineHeight,
+        { align: 'center' }
+      );
+    }
 
     return y + 4;
   },

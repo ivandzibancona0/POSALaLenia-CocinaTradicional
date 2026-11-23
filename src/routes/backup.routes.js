@@ -51,8 +51,13 @@ router.put('/', authenticateToken, requireAdmin, async (req, res) => {
       font_size,
       auto_cut,
       show_logo,
+      show_slogan,
+      show_rfc,
+      show_ticket_footer,
       tax_percentage
     } = req.body;
+
+    const toFlag = (val, defaultVal = 1) => (val === undefined ? defaultVal : (val ? 1 : 0));
 
     await db.run(`
       UPDATE settings SET
@@ -66,6 +71,9 @@ router.put('/', authenticateToken, requireAdmin, async (req, res) => {
         font_size = ?,
         auto_cut = ?,
         show_logo = ?,
+        show_slogan = ?,
+        show_rfc = ?,
+        show_ticket_footer = ?,
         tax_percentage = ?,
         updated_at = CURRENT_TIMESTAMP
       WHERE id = 1
@@ -80,6 +88,9 @@ router.put('/', authenticateToken, requireAdmin, async (req, res) => {
       font_size || 'medium',
       auto_cut ? 1 : 0,
       show_logo ? 1 : 0,
+      toFlag(show_slogan, 1),
+      toFlag(show_rfc, 1),
+      toFlag(show_ticket_footer, 1),
       parseFloat(tax_percentage) || 0
     ]);
 

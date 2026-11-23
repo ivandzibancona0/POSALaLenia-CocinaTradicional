@@ -11,7 +11,8 @@
 .pos-ticket {
   background: #ffffff;
   color: #000000;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 700;
   font-size: 13px;
   line-height: 1.35;
   padding: 16px 12px;
@@ -86,7 +87,7 @@
 
 .ticket-slogan {
   font-size: 11px;
-  font-style: italic;
+  font-style: normal;
   margin-bottom: 4px;
 }
 
@@ -150,7 +151,7 @@
 
 .ticket-item-subtext {
   font-size: 10px;
-  color: #333;
+  color: #000000;
 }
 
 .ticket-summary-table {
@@ -228,8 +229,18 @@
     margin: 0 !important;
     padding: 2mm !important;
     width: 100% !important;
+    color: #000000 !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+  }
+
+  .pos-ticket,
+  .pos-ticket * {
+    color: #000000 !important;
+  }
+
+  .pos-ticket .ticket-customer-box {
+    background: transparent !important;
   }
 
   .pos-ticket .ticket-logo {
